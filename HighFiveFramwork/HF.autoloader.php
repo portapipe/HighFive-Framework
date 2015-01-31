@@ -25,4 +25,4 @@ class HF {
 }
 
 //remove this to load only the var you care about!
-$GLOBAL["HF"] = new HF();
+$GLOBALS["HF"] = new HF();
