@@ -6,18 +6,23 @@ $HF->class->classVar;
 ```
 You can create any class you need, just name the file as you want the class name will be accessible and prefix it with "HF".
 
-Pratical example. We want to create a car class:
+Pratical example. We want to create a "animal" class:
 ```
-1. Create a file named "car.HF.php" into the "/lib" folder
-2. Create a class: "class HFcar{ ... }"
+1. Create a file named "animal.HF.php" into the "/lib" folder
+2. Create a class: "class HFanimal{ ... }"
 ```
 Now You can access to it directly or via $HF main object:
 ```
-$HF->car->varName;
-$HF->car->function();
-HFcar::varName;
-HFcar::function();
+$HF->animal->varName;
+$HF->animal->function();
+HFanimal::varName;
+HFanimal::function();
+
+EXAMPLES
+$HF->animal->color("brown")->eyes("blue")->type("dog"); //return a brown dog with blue eyes
+$HF::animal::takeTheBone(); //send the brown dog with blue eyes to take the bone!
+
 ```
-That's it.
+That's it. Really limitless.
 
 Cool, uh?
