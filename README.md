@@ -21,7 +21,7 @@ HFanimal::function();
 //EXAMPLES
 $HF->animal->eyes("blue"); //setting the eyes of generic animal to blue
 $HF->animal->color("brown")->type("dog"); //return a brown dog with blue eyes (because of the line above)
-$HFanimal::takeTheBone(); //send the brown dog with blue eyes to take the bone!
+HFanimal::takeTheBone(); //send the brown dog with blue eyes to take the bone!
 ```
 That's it. Really limitless.
 
