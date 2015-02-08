@@ -12,16 +12,16 @@ Pratical example. We want to create a "animal" class:
 2. Create a class: "class HFanimal{ ... }"
 ```
 Now You can access to it directly or via $HF main object:
-```
+```php
 $HF->animal->varName;
 $HF->animal->function();
 HFanimal::varName;
 HFanimal::function();
 
-EXAMPLES
-$HF->animal->color("brown")->eyes("blue")->type("dog"); //return a brown dog with blue eyes
+//EXAMPLES
+$HF->animal->eyes("blue"); //setting the eyes of generic animal to blue
+$HF->animal->color("brown")->type("dog"); //return a brown dog with blue eyes (because of the line above)
 $HF::animal::takeTheBone(); //send the brown dog with blue eyes to take the bone!
-
 ```
 That's it. Really limitless.
 
