@@ -13,9 +13,9 @@ Pratical example. We want to create a "animal" class:
 ```
 Now You can access to it directly or via $HF main object:
 ```php
-$HF->animal->varName;
+$HF->animal->varName; //get (no set) of a public class var
 $HF->animal->function();
-HFanimal::varName;
+HFanimal::varName; //with this one you get AND SET the value of a public class var 
 HFanimal::function();
 
 //EXAMPLES
