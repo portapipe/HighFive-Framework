@@ -2,11 +2,55 @@
 //include the config file for HighFive
 require("HF.config.php");
 
+# ========================================== #
+# ==== SESSION IS NEEDED FOR SOME TOOLS ==== #
+# ========================================== #
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+if(DEBUGMODE){
+	ini_set('display_errors', 'On');
+}
+
+# ======================= #
+# ==== LOAD LANGUAGE ==== #
+# ======================= #
+
+$strings = file_get_contents(__HF__.'/lang/'.HF_LANGUAGE);
+if($strings!=""){
+	$divideLang = explode("\n", $strings);
+	foreach($divideLang as $v){
+		if(isset($v[0]) && trim($v)[0]=='#') continue;
+		if(trim($v)=="") continue;
+		$ar = explode("=>",$v);
+		$ar1 = (isset($ar[0])?trim($ar[0]):"");
+		$ar2 = (isset($ar[1])?trim($ar[1]):"");
+		define("LANG_".strtoupper(trim($ar1)),trim($ar2));
+	}
+}
+
+
+
+# =========================== #
+# ==== LOAD DEPENDENCIES ==== #
+# =========================== #
+
+$dependencies = array();
 
 function dependencies(){
+	
+	global $dependencies;
+	
 	if(count(func_get_args())>0){
 		$stop = "";
 		foreach (func_get_args() as $param) {
+			
+			//Adding a dependencie to the array, so I can auto-load the necessary file
+			$dependencies[] = $param.".HF.php";
+			
 		    if(!file_exists(HF_LIB_DIR.$param.".HF.php")){
 			    $stop .= "<li class=\"list-group-item\">$param.HF.php 
 			    			<a href=\"https://github.com/portapipe/HighFive-Framework/blob/master/HighFiveFramwork/lib/$param.HF.php\" target=\"_blank\">
@@ -33,8 +77,7 @@ function dependencies(){
 					<div class="page-header">
 						<h3>Dependencies are missing in HighFive Framework<br/><small>Check the \'lib/\' folder into the HF directory</small></h3>
 						<a href="https://github.com/portapipe/HighFive-Framework/tree/master/HighFiveFramwork/lib" target="_blank">
-							<button class="btn btn-warning">Libs Download List</button>
-						</a>
+							<button class="btn btn-warning">Libs Download List</button></a>
 						<br/><small><i>If you\'re using a custom class it should not be in our repository</i></small>
 					</div>
 					
@@ -46,26 +89,44 @@ function dependencies(){
 	}
 }
 
+# ================================= #
+# ==== LOAD HF CLASS AND CHILD ==== #
+# ================================= #
 
 class HF {
 	
+		
 	public function __construct(){
 		if(count(func_get_args())>0){
 			foreach (func_get_args() as $param) {
 		        $files[] = $param.".HF.php";
 		    }
+		    
 		}else{
 			$files = scandir(HF_LIB_DIR);
 		}
 
 		foreach($files as $file) {
-	   		if($file!="."&&$file!=".."){
+	   		if($file!="."&&$file!=".."&&pathinfo($file, PATHINFO_EXTENSION)=="php"){
 		   		$file2 = "HF".str_replace(".HF.php", "", $file);
 		   		$file3 = str_replace("HF", "", $file2);
-		   		require(HF_LIB_DIR.$file);
+		   		require_once(HF_LIB_DIR.$file);
 		   		$this->{$file3} = new $file2();
 		   	}	
 	   	}
+	   	
+	   	global $dependencies;
+	   	if(count($dependencies)>0){
+			foreach($dependencies as $file) {
+		   		if(!in_array($file, $files)){
+			   		$file2 = "HF".str_replace(".HF.php", "", $file);
+			   		$file3 = str_replace("HF", "", $file2);
+			   		require(HF_LIB_DIR.$file);
+			   		$this->{$file3} = new $file2();
+			   	}	
+		   	}
+		}
+	   	
 	}	
 }
 

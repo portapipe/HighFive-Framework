@@ -1,0 +1,17 @@
+# Generici
+close => Chiudi
+open => Apri
+yes => Si
+no => No
+save => Salva
+
+# CRUD
+add => Aggiungi +
+view => Visualizza
+edit => Modifica
+delete => Cancella
+delete_confirm => Confermi Cancellazione?
+
+#FILE
+extension_not_valid = Estensione Non Valida! Estensioni accettate:
+file_big = File troppo grande! Massimo: 

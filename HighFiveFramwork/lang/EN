@@ -1,0 +1,17 @@
+# Generic
+close => Close
+open => Open
+yes => Yes
+no => No
+save => Save
+
+# CRUD
+add => Add +
+view => View
+edit => Edit
+delete => Delete
+delete_confirm => Confirm Delete?
+
+#FILE
+extension_not_valid = Extension Not Valid! Accepted Extentions:
+file_big = File too big! Max: 
