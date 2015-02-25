@@ -53,6 +53,20 @@ class HFlibraries {
 		return $this;
 	}
 
+	/*! Pass an array of functions that you want to see ajaxified
+		It should be better to put it between the tag head because it includes files
+		IMPORTANT! There must be the 2 phplivex files into the addon folder of the HighFiveFramework folder!
+	*/
+	function phplivex($functionsArray){
+		
+		if(!class_exists("PHPLiveX")){
+			require_once(HF_FULL_ADDON_DIR."PHPLiveX.php");
+		}
+
+		$ajaxPhpLiveXNoMoreThanThat = new PHPLiveX($functionsArray); 
+		$ajaxPhpLiveXNoMoreThanThat->Run("/".HF_ADDON_DIR.'phplivex.js');
+	
+	}
 
 	
 

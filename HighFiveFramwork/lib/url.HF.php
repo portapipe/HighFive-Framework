@@ -16,6 +16,11 @@ class HFurl {
 		if(strpos($string,"://")) return false;
 		return true;
 	}
+	
+	function noDomain(){
+		if($_SERVER['REQUEST_URI'][0]=="/") return substr($_SERVER['REQUEST_URI'], 1);
+		return $_SERVER['REQUEST_URI'];
+	}
 
 
 
