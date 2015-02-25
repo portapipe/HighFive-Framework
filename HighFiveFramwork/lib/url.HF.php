@@ -1,4 +1,4 @@
-<?
+<?php
 	
 class HFurl {
 
@@ -22,6 +22,14 @@ class HFurl {
 		return $_SERVER['REQUEST_URI'];
 	}
 
-
+	function changeUrl($newUrl,$actionOnUrlChange="",$historyTitle="",$passData=""){
+		echo "<script>window.history.pushState(".($passData==""?'null':$passData).", ".($historyTitle==""?'null':$historyTitle).", '$newUrl');</script>";
+		echo "<script>window.onpopstate = function(event) {
+					  $actionOnUrlChange
+					};
+			  </script>";
+		return $this;
+	}
+	
 
 }
