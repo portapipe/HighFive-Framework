@@ -71,7 +71,7 @@ class HFpagination{
 	
 		
 		//Query just for pagination's numbers
-		$tot =  sqlToArray($this->sql." LIMIT $limit,".$this->resultsPerPage * $this->maxPages);
+		$tot =  HFdb::sqlToArray($this->sql." LIMIT $limit,".$this->resultsPerPage * $this->maxPages);
 		$pagPerPagination = count($tot) / $this->resultsPerPage;
 		$pagPerPagination = ceil($pagPerPagination);
 		
