@@ -32,4 +32,8 @@ class HFurl {
 	}
 	
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master
