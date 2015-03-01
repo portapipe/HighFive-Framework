@@ -31,9 +31,4 @@ class HFurl {
 		return $this;
 	}
 	
-
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/master
