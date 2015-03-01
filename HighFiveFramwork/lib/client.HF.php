@@ -1,4 +1,4 @@
-<?php
+<?php dependencies("string");
 	
 /*! All stuff about the client browser (ip,browser name, device type...) */
 class HFclient{
@@ -22,6 +22,38 @@ class HFclient{
 	        $ipaddress = 'UNKNOWN';
 	    return $ipaddress;
 	}
+	
+	function isLogged(){
+		if(isset($_SESSION['HF_user'])) return true;
+		return false;
+	}
+	
+	function login($id,$data=""){
+		if(!$this->isLogged()){
+			$_SESSION['HF_user'] = HFstring::encrypt(json_encode(array('id'=>$id,'data'=>$data)));
+		}
+	}
+	
+	function logout(){
+		unset($_SESSION['HF_user']);
+	}
+
+	function getLoggedId(){
+		if(!$this->isLogged()) return false;
+		if(!isset($_SESSION['HF_user'])) return false;
+		$data = json_decode(HFstring::decrypt($_SESSION['HF_user']));
+		return $data->id;
+		
+	}
+	
+	function getLoggedData(){
+		if(!$this->isLogged()) return false;
+		if(!isset($_SESSION['HF_user'])) return false;
+		$data = json_decode(HFstring::decrypt($_SESSION['HF_user']));
+		return $data->data;
+	}
+	
+		
 	
 	
 }

@@ -3,7 +3,6 @@
 /*! All about strings */
 class HFstring{
 	
-	
 	/*! Convert a string into an array
 		Can be found in HFarray::stringToArray() too
 		RETURN ARRAY */
@@ -24,6 +23,15 @@ class HFstring{
 	}
 	
 	
+	function encrypt($string) {
+		return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, ENCRYPTION_KEY, $string, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+	}
+	
+	/*! Returns decrypted original string */
+	function decrypt($string) {
+		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, ENCRYPTION_KEY, base64_decode($string), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+	}
+
 	
 }
 
