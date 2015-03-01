@@ -1,4 +1,4 @@
-<?
+<?php
 	
 class HFpagination{
 	
@@ -64,14 +64,14 @@ class HFpagination{
 	}
 	
 	function generate(){
-		
+		global $HF;
 		$pag = $this->pag;
 		//Starting record for queries based on the actual page and results for page choosen
 		$limit = ($pag - 1) * $this->resultsPerPage;
 	
 		
 		//Query just for pagination's numbers
-		$tot =  sqlToArray($this->sql." LIMIT $limit,".$this->resultsPerPage * $this->maxPages);
+		$tot =  $HF->db->sqlToArray($this->sql." LIMIT $limit,".$this->resultsPerPage * $this->maxPages);
 		$pagPerPagination = count($tot) / $this->resultsPerPage;
 		$pagPerPagination = ceil($pagPerPagination);
 		

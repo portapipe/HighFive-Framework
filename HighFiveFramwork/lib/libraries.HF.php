@@ -1,4 +1,4 @@
-<?
+<?php
 	
 /*! Usage $HF->libraries->bootstrap3()->fontawsome() */
 class HFlibraries {

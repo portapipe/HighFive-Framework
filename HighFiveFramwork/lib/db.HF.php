@@ -1,4 +1,4 @@
-<? dependencies();
+<?php dependencies();
 
 /*! Contains every class, even CRUD, to manage a MySQL database */	
 class HFdb {

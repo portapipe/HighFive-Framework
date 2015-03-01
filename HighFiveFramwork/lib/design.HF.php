@@ -1,4 +1,4 @@
-<?
+<?php
 /*! Most of the component of a webpage should be done with this class! */
 class HFdesign{
 	

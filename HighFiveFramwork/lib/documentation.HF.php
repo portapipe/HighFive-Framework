@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*! Create Documentation with this class */
 class HFdocumentation{

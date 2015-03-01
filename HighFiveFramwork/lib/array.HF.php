@@ -1,4 +1,4 @@
-<? dependencies("string");
+<?php dependencies("string");
 
 /*! All about arrays */
 class HFarray{

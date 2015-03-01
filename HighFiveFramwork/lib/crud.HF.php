@@ -1,4 +1,4 @@
-<? dependencies("libraries","db","file","pagination","url");
+<?php dependencies("libraries","db","file","pagination","url");
 
 # ==================== #
 # ==== AJAX PART! ==== #
@@ -198,6 +198,8 @@ class HFcrud{
 	public $page = 1;
 	public $resultsPerPage = 10;
 	
+	public $justReturn = false;
+	
 	/*! Needed to have a clear settings, instead you can have a setting you don't want so use it at the first beginning to inizialize the settings */
 	function init(){
 		$this->tableName = "";
@@ -228,6 +230,9 @@ class HFcrud{
 		
 		$this->page = 1;
 		$this->resultsPerPage = 10;
+		
+		$this->justReturn = false;
+		
 		return $this;
 	}
 	
@@ -357,6 +362,11 @@ class HFcrud{
 			$array[$field] = $code;
 		}
 		$this->php = $array;
+		return $this;
+	}
+	
+	function justReturn(){
+		$this->justReturn = true;
 		return $this;
 	}
 	
@@ -521,9 +531,11 @@ class HFcrud{
 	
 	function css(){
 		
+		global $HF;
+		
 		$this->css = true;
 		
-		HFlibraries::bootstrap3();
+		$HF->libraries->bootstrap3();
 		
 		
 		$output ="
@@ -611,7 +623,7 @@ class HFcrud{
 		    ";
 		    
 		    echo $output;
-		    if($this-ajaxify === true && !$this->ajaxCall) $this->async();
+		    if($this->ajaxify === true && !$this->ajaxCall) $this->async();
 			return $this;
 	}
 	
@@ -715,16 +727,17 @@ class HFcrud{
 			}
 		}
 		
+		$HFdb = new HFdb();
 
 		if(count($this->data)==0){
 			if($this->tableName!=""){
-				$array = HFdb::sqlToArray("SELECT * FROM ".$this->tableName);
+				$array = $HFdb->sqlToArray("SELECT * FROM ".$this->tableName);
 				$this->sql = "SELECT * FROM ".$this->tableName;
 				$pag->setSql($this->sql);
 				if(count($array)>0){
 					$this->setData($array);
 				}else{
-					$array2 = HFdb::sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
+					$array2 = $HFdb->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
 					foreach($array2 as $v){
 						$titles[$v['Field']] = $v['Field'];
 						$this->setTitle($titles);
@@ -742,6 +755,12 @@ class HFcrud{
 		$phpcode = $this->php;
 		$hide = $this->hide;
 		$disabled = $this->disabled;
+
+		/* Service Vars */
+		$modalID = $this->genID;
+		$ktr = "";
+		$tits = '';
+		$dats = '';
 
 		$fieldType = $this->fieldType;
 
@@ -800,7 +819,7 @@ class HFcrud{
 			
 		}
 		
-		if($this->view||$this->edit||$this->update||$this->delete){
+		if($this->view||$this->edit||$this->delete){
 			if(isset($titles['tools'])){
 				$tits.="<th>".$titles['tools']."</th>";
 			}else{
@@ -1129,7 +1148,6 @@ class HFcrud{
 					  <input type="hidden" name="_tableID" value="'.$this->genID.'">
 					  <input type="hidden" name="_tableName" value="'.$this->tableName.'">
 					  <input type="hidden" name="_idField" value="'.$this->id.'">
-					  <input type="hidden" name="_idValue" value="'.$ogArray[$ktr][$this->id].'">
 					  
 					  ';
 				
@@ -1277,7 +1295,12 @@ class HFcrud{
 			
 HTML;
 		//Setting Table ID for the refresh thing
-		echo '<span id="table'.$this->genID.'">'.$output.'</span>';
+		if($this->justReturn != true){
+			echo '<span id="table'.$this->genID.'">'.$output.'</span>';
+		}else{
+			return '<span id="table'.$this->genID.'">'.$output.'</span>';
+		}
+		
 		$_SESSION["_class".$this->genID] = base64_encode(serialize($this));
 		//echo '<div id="preloader">SIEDITI E </div><button onclick="reload(\''.$this->genID.'\',{target:\'table'.$this->genID.'\',preloader:\'preloader\'})">CLICCA QUI</button><span id="hey"></span>';
 

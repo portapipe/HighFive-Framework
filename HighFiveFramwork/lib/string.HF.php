@@ -1,4 +1,4 @@
-<?
+<?php
 	
 /*! All about strings */
 class HFstring{

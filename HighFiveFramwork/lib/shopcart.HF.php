@@ -1,4 +1,4 @@
-<?
+<?php
 /*! Create a shopping cart with a line, necessary to send it to the payments method with a one-line approach */	
 class HFshopcart{
 	

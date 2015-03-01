@@ -1,4 +1,4 @@
-<?
+<?php
 /*! Create a Sitemap dinamically
 	It needs a dedicated database table and an active connection to run! */
 class HFsitemap {

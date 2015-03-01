@@ -1,4 +1,4 @@
-<? dependencies("shopcart");
+<?php dependencies("shopcart");
 	
 /*! Manage all the paypal stuff with this class*/
 class HFpaypal{

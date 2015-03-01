@@ -1,4 +1,4 @@
-<?
+<?php
 	
 /*! All stuff about the client browser (ip,browser name, device type...) */
 class HFclient{

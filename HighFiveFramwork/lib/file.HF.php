@@ -1,4 +1,4 @@
-<?
+<?php
 class HFfile{
 	
 	public $resizeSize = false;
