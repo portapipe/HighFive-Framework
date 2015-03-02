@@ -7,7 +7,7 @@ if(isset($_POST["_action"])){
 	//echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'","test":"yep"}';die; 
 	//echo "HSJSHASAHJSD";die;
 	//print_r($_FILES);die;
-	//print_r($_POST);die;
+	//print_r($_POST);die;
 	
 	$data = array();
 
@@ -194,7 +194,7 @@ class HFcrud{
 	public $ajaxCall = false;
 	public $ajaxify = false;
 	
-	public $genID = 1;
+	public $genID = 0;
 	public $page = 1;
 	public $resultsPerPage = 10;
 	
@@ -1295,18 +1295,21 @@ class HFcrud{
 			
 HTML;
 		//Setting Table ID for the refresh thing
+		$_SESSION["_class".$this->genID] = base64_encode(serialize($this));
+		
 		if($this->justReturn != true){
-			echo '<span id="table'.$this->genID.'">'.$output.'</span>';
+			echo '<span id="table'.$this->genID.'" class="TABELLA_'.$this->genID.'">'.$output.'</span>';
 		}else{
-			return '<span id="table'.$this->genID.'">'.$output.'</span>';
+			$idGen = $this->genID;
+			if($newTable===true) $this->genID++;
+			return '<span id="table'.$idGen.'" class="TABELLA_'.$idGen.'">'.$output.'</span>';
 		}
 		
-		$_SESSION["_class".$this->genID] = base64_encode(serialize($this));
 		//echo '<div id="preloader">SIEDITI E </div><button onclick="reload(\''.$this->genID.'\',{target:\'table'.$this->genID.'\',preloader:\'preloader\'})">CLICCA QUI</button><span id="hey"></span>';
 
 
-		
 		if($newTable===true) $this->genID++;
+		
 		return $output;
 
 		
