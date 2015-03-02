@@ -13,7 +13,11 @@ if(isset($_POST["_action"])){
 
 	foreach($_POST as $k=>$v){
 		if($k[0]!="_"){
-			$data[$k] = htmlspecialchars($v,ENT_QUOTES);
+			if(is_string($v)){
+				$data[$k] = htmlspecialchars($v,ENT_QUOTES);
+			}else{
+				$data[$k] = $v;
+			}
 		}
 	}
 	
@@ -620,6 +624,21 @@ class HFcrud{
 			    });  
 			}  
 			</script>  
+			
+			<script>
+			$(function(){
+			  var hash = window.location.hash;
+			  hash && $('ul.nav a[href=\"' + hash + '\"]').tab('show');
+			
+			  $('.nav-tabs a').click(function (e) {
+			    $(this).tab('show');
+			    var scrollmem = $('body').scrollTop();
+			    window.location.hash = this.hash;
+			    $('html,body').scrollTop(scrollmem);
+			  });
+			});
+			</script>
+			
 		    ";
 		    
 		    echo $output;
@@ -786,7 +805,7 @@ class HFcrud{
 			
 			if(isset($phpcode[$this->orderByField])){
 				$value = $v[$this->orderByField];
-				eval($phpcode[$this->orderByField]);
+				if($value!="") eval($phpcode[$this->orderByField]);
 				$orderValue[$k] = $value;
 			}else{
 				$orderValue[$k] = $v[$this->orderByField];
@@ -851,7 +870,7 @@ class HFcrud{
 				//Check if the value to be written in the table has setPhp() set to it
 				if(isset($phpcode[$k])){
 					$value = $v;
-					eval($phpcode[$k]);
+					if($value!="") eval($phpcode[$k]);
 					$dats .= nl2br($value);
 				}else{
 					//Check if passed value is an image or a file, if not is printed as is
@@ -929,7 +948,7 @@ class HFcrud{
 					
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
-						eval($phpcode[$k]);
+						if($value!="") eval($phpcode[$k]);
 						$value = $value;
 					}else{
 						$value =$ogArray[$ktr][$k];
@@ -1009,7 +1028,7 @@ class HFcrud{
 					
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
-						eval($phpcode[$k]);
+						if($value!="") eval($phpcode[$k]);
 						$value = $value;
 					}else{
 						$value =$ogArray[$ktr][$k];
@@ -1164,7 +1183,7 @@ class HFcrud{
 					
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
-						eval($phpcode[$k]);
+						if($value!="") eval($phpcode[$k]);
 						$value = $value;
 					}else{
 						$value =$ogArray[$ktr][$k];
