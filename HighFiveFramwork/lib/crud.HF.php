@@ -13,7 +13,7 @@ if(isset($_POST["_action"])){
 
 	foreach($_POST as $k=>$v){
 		if($k[0]!="_"){
-			$data[$k] = $v;
+			$data[$k] = htmlspecialchars($v,ENT_QUOTES);
 		}
 	}
 	
