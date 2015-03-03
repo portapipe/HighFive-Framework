@@ -2,7 +2,7 @@
 class HFfile{
 	
 	public $resizeSize = false;
-	public $quality = 90;
+	public $quality = 70;
 	public $oldFile = "";
 	
 	/*! Setting this will automagically resize the image you'll upload! (max width/height)
@@ -185,9 +185,18 @@ class HFfile{
 		}
 		$image_p = imagecreatetruecolor($width, $height);
 		
-		//Maintain the Alpha of gif/png images
-		imagealphablending( $image_p, false );
-		imagesavealpha( $image_p, true );
+		if ($info['mime'] == 'image/png' || $info['mime'] == 'image/gif'){
+			//Maintain the Alpha of gif/png images
+			//imagealphablending( $image_p, false );
+			//imagesavealpha( $image_p, true );
+			/*
+			imagealphablending($image_p, false);
+			imagesavealpha($image_p,true);
+			$transparent = imagecolorallocatealpha($image_p, 255, 255, 255, 127);
+			imagefilledrectangle($image_p, 0, 0, $width, $height, $transparent);
+			imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $info[0], $info[1]);
+			*/
+		}
 		
 		//AUTO ROTATING PART
 		if ($info['mime'] == 'image/jpeg'){
@@ -208,7 +217,12 @@ class HFfile{
 		}
 		imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
 	
-		imagepng($image_p, $destination, $quality/10);
+		if ($info['mime'] == 'image/png' || $info['mime'] == 'image/gif'){
+			imagegif($image_p, $destination);
+			//PNG imagepng($image_p, $destination, $quality/10);
+		}else{
+			imagejpeg($image_p, $destination, $quality);
+		}
 	}
 
 	/*! Directory is the folder name FROM THE ROOT! where the file is */
