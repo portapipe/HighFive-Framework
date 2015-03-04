@@ -270,22 +270,61 @@ class HFdocumentation{
 	function clipboard(){
 		
 	echo '
-		<script src="'.HF_ADDON_DIR.'ZeroClipboard.min.js"></script>
-	  
-	<script>
+	<script src="/'.HF_ADDON_DIR.'ZeroClipboard.min.js"></script>
 	
-		var client = new ZeroClipboard( document.getElementsByClassName("copy") );
+	<div id="HFclipboardOK" style="display: none; position:fixed; left:40%; right:50%; top:45%; z-index:100000; font-size:200px;">
+	  <span aria-hidden="true"><span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span></span>
+	</div>
+	
+	<script>
+		classClipboard();
 		
-		client.on( "ready", function( readyEvent ) {
-		  // alert( "ZeroClipboard SWF is ready!" );
+		function classClipboard(){
+			var clients = new ZeroClipboard( document.getElementsByClassName("copy") );
+			
+			clients.on( "ready", function( readyEvent ) {
+			  // alert( "ZeroClipboard SWF is ready!" );
+			
+			  clients.on( "aftercopy", function( event ) {
+				  window.setTimeout(function() {
+					    $("#HFclipboardOK").show().fadeOut(1500, function(){
+					        $(this).css("display:none"); 
+					    });
+					}, 2000);
+				  
+				  document.body.style.cursor = "copy";
+				  setTimeout(function(){document.body.style.cursor = "auto";}, 2000);
+			    // `this` === `client`
+			    // `event.target` === the element that was clicked
+			    //event.target.style.display = "none";
+			    //alert("Copied text to clipboard: " + event.data["text/plain"] );
+			  } );
+			} );
+		}
+	
+		function HFclipboard(thisOne){
+			var client = new ZeroClipboard( thisOne );
 		
-		  client.on( "aftercopy", function( event ) {
-		    // `this` === `client`
-		    // `event.target` === the element that was clicked
-		    //event.target.style.display = "none";
-		    //alert("Copied text to clipboard: " + event.data["text/plain"] );
-		  } );
-		} );
+			client.on( "ready", function( readyEvent ) {
+			  // alert( "ZeroClipboard SWF is ready!" );
+			
+			  client.on( "aftercopy", function( event ) {
+				  window.setTimeout(function() {
+					    $("#HFclipboardOK").show().fadeOut(1500, function(){
+					        $(this).css("display:none"); 
+					    });
+					}, 2000);
+				  
+				  document.body.style.cursor = "copy";
+				  setTimeout(function(){document.body.style.cursor = "auto";}, 2000);
+				  
+			    // `this` === `client`
+			    // `event.target` === the element that was clicked
+			    //event.target.style.display = "none";
+			    //alert("Copied text to clipboard: " + event.data["text/plain"] );
+			  } );
+			} );
+		}
 	
 	</script>
 	
@@ -295,5 +334,9 @@ class HFdocumentation{
 	return $this;
 	}
 	
+	
+	function addClipboard($stringToCopy){
+		return ' id="'.rand(0,1000000).'" class="copy" data-clipboard-text="'.$stringToCopy.'" title="'.$stringToCopy.'"';
+	}
 	
 }
