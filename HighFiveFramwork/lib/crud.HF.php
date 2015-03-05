@@ -4,6 +4,7 @@
 # ==== AJAX PART! ==== #
 # ==================== #
 if(isset($_POST["_action"])){
+	global $HF;
 	//echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'","test":"yep"}';die; 
 	//echo "HSJSHASAHJSD";die;
 	//print_r($_FILES);die;
@@ -36,8 +37,9 @@ if(isset($_POST["_action"])){
 	//pirnt_r($class->fieldType);die;
 	switch($_POST['_action']){
 		case "edit":
+
 			include_once(HF_LIB_DIR."db.HF.php");
-			
+			$hf_db = new HFdb();			
 			
 			//looping data
 			foreach($data as $chiave=>$valore){
@@ -93,13 +95,14 @@ if(isset($_POST["_action"])){
 				}
 			}
 			
-			HFdb::update($_POST['_idValue'], $_POST['_tableName'], $data);
+			$hf_db->update($_POST['_idValue'], $_POST['_tableName'], $data);
 		break;
 		
 		
 		case "add":
 						
 			include_once(HF_LIB_DIR."db.HF.php");
+			$hf_db = new HFdb();
 			//looping data
 			foreach($data as $chiave=>$valore){
 				//Check for a particular field type
@@ -108,8 +111,10 @@ if(isset($_POST["_action"])){
 						if($k=='fileSelect'){
 							
 							include_once(HF_LIB_DIR."file.HF.php");
+							$hf_file = new HFfile();
+
 							$data[$chiave] = "";
-							$json = HFfile::uploadFile($chiave,$v['uploadFolder'],$v['maxFileSize'],$v['allowedFiles'],$v['rewriteIfExists']);
+							$json = $hf_file->uploadFile($chiave,$v['uploadFolder'],$v['maxFileSize'],$v['allowedFiles'],$v['rewriteIfExists']);
 							if(!is_array($json)){
 								echo "Error edit file: ". $json;
 								$stop=1;
@@ -119,10 +124,13 @@ if(isset($_POST["_action"])){
 						}
 						if($k=='imageSelect'){
 							
+
 							include_once(HF_LIB_DIR."file.HF.php");
+							$hf_file = new HFfile();
+							
 							$data[$chiave] = "";
 							if($v['resizePixel']!=false) HFfile::setResizeSize($v['resizePixel']);
-							$json = HFfile::uploadImage($chiave,$v['uploadFolder'],$v['maxFileSize'],$v['allowedFiles'],$v['rewriteIfExists']);
+							$json = $hf_file->uploadImage($chiave,$v['uploadFolder'],$v['maxFileSize'],$v['allowedFiles'],$v['rewriteIfExists']);
 							if(!is_array($json)){
 								echo "Error edit image: ". $json;
 								$stop=1;
@@ -141,12 +149,14 @@ if(isset($_POST["_action"])){
 					}
 				}
 			}
-			HFdb::insert($_POST['_tableName'], $data);
+			$hf_db->insert($_POST['_tableName'], $data);
 		break;
 		
 		case "remove":
+			include_once(HF_LIB_DIR."db.HF.php");
+			$hf_db = new HFdb();
 			//not used but can be useful to someone
-			HFdb::delete($_POST['_idValue'], $_POST['_tableName']);
+			$hf_db->delete($_POST['_idValue'], $_POST['_tableName']);
 		break;
 		
 		
@@ -275,8 +285,9 @@ class HFcrud{
 		THIS IS NEEDED FOR ASYNC STUFF! Or the table will not refresh properly after adding/editing/deleting stuff!
 	*/
 	function setSqlData($sql){
+		global $HF;
 		$this->sql = $sql;
-		$data = HFdb::sqlToArray($sql);
+		$data = $HF->db->sqlToArray($sql);
 		$this->data = $data;
 		foreach($data as $v){
 			foreach($v as $k=>$v){
@@ -718,7 +729,11 @@ class HFcrud{
 	/*! Generate (echo and return both) the table.
 		Pass false as argument to not echo it, just return */
 	function generate($newTable = true,$class = ""){
-
+		
+		
+		global $HF;
+		
+		
 		if($this->css===false) $this->css();
 	    if($this->ajaxify === true && !$this->ajaxCall) $this->async();
 		if($this->ajaxify === true && $this->tableName == ""){ echo "YOU MUST TO SET THE setTable() TABLE NAME! The system must know where to update/delete/create the new data using async stuff!"; die;}
@@ -875,7 +890,7 @@ class HFcrud{
 				}else{
 					//Check if passed value is an image or a file, if not is printed as is
 					if(isset($fieldType[$k]["imageSelect"])&&$v!=""){
-						if(HFurl::isLocal($v)){
+						if($HF->url->isLocal($v)){
 							$dats.='<img src="'.$fieldType[$k]['imageSelect']['uploadFolder'].($fieldType[$k]['imageSelect']['uploadFolder'][strlen($fieldType[$k]['imageSelect']['uploadFolder'])-1]!="/"?"/":"").$v.'"
 									 alt="" style="max-height:200px">';
 						}else{
@@ -991,7 +1006,8 @@ class HFcrud{
 			# ======================= #
 			# ==== 	 EDIT MODAL  ==== #
 			# ======================= #
-
+			echo count($ogArray);
+			if(count($ogArray)>0){
 			$dats.= '
 			
 			<!-- Modal Edit -->
@@ -1008,7 +1024,6 @@ class HFcrud{
 					  <!-- Default panel contents -->
 					  <form id="formEdit'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="POST" onsubmit="return sendHFForm(this);" enctype="multipart/form-data">
 					  <input type="hidden" name="_action" value="edit">
-					  <input type="hidden" name="_class" value="'.$dataToPost.'">
 					  <input type="hidden" name="_tableID" value="'.$this->genID.'">
 					  <input type="hidden" name="_tableName" value="'.$this->tableName.'">
 					  <input type="hidden" name="_idField" value="'.$this->id.'">
@@ -1043,14 +1058,14 @@ class HFcrud{
 									';
 							
 						if(!isset($fieldType[$k])){
-							$dats .= '<p><input type="text" class="form-control" name="'.$k.'" value="'.$value.'" style="width:100%" '.($disabled[$k]?'readonly':'').'></p>';
+							$dats .= '<p><input type="text" class="form-control" name="'.$k.'" value="'.$value.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'></p>';
 						}else{
 							
 							foreach($fieldType[$k] as $kf=>$vf){
 								switch($kf){
 									case "boolean":
 										$dats .= '
-										<div class="radio" '.($disabled[$k]?'disabled="disabled"':'').'>
+										<div class="radio" '.(isset($disabled[$k]) && $disabled[$k]?'disabled="disabled"':'').'>
 											<label>
 												<input type="radio" name="'.$k.'" value="1" '.($ogArray[$ktr][$k]==1?'checked':'').'> '.LANG_YES.'
 											</label>
@@ -1063,19 +1078,19 @@ class HFcrud{
 									break;
 									case "textArea":
 										$dats .= '
-											<textarea class="form-control" rows="10" name="'.$k.'" '.($disabled[$k]?'readonly':'').'>'
+											<textarea class="form-control" rows="10" name="'.$k.'" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>'
 												.stripslashes( $ogArray[$ktr][$k] ).
 											'</textarea>
 											';
 									break;
 									case "password":
 										$dats .= '
-											<input type="password" class="form-control" name="'.$k.'" value="'.$ogArray[$ktr][$k].'" style="width:100%" '.($disabled[$k]?'disabled':'').'>
+											<input type="password" class="form-control" name="'.$k.'" value="'.$ogArray[$ktr][$k].'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'">
 											';
 									break;
 									case "select":
-										$dats .= '<select class="form-control" name="'.$k.'" '.($disabled[$k]?'disabled':'').'>';
+										$dats .= '<select class="form-control" name="'.$k.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'>';
 										
 										foreach($vf as $optk=>$optv){
 											$dats .= '<option class="form-control" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'selected':'').'>'.$optv.'</option>';
@@ -1085,23 +1100,23 @@ class HFcrud{
 									case "checkbox":
 										$data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox '.($disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="checkbox '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "radio":
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$optv.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.($disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$optv.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "fileSelect":
 										$dats .= '
-											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.($disabled[$k]?'readonly':'').'/>
+											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'/>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'" >
 											';
 									break;
 									case "imageSelect":
 										$dats .= '
-											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.($disabled[$k]?'readonly':'').'/>
+											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'/>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'" >
 											';
 									break;
@@ -1136,6 +1151,7 @@ class HFcrud{
 			</div>
 			';
 			
+			}
 			}
 		}
 		# =================== #
