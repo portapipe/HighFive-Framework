@@ -165,7 +165,13 @@ if(isset($_POST["_action"])){
 			$stop=1;
 	}
 	
-	if(!isset($stop)) echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'"}';
+	if(!isset($stop)){
+		if(isset($_FILES)){
+			echo '{"result":"reload"}';
+		}else{
+			echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'"}';
+		}
+	}
 	die;
 }
 
@@ -610,8 +616,6 @@ class HFcrud{
 		}
 		    </style>
 		    
-		    
-		    
 			<script type=\"text/javascript\">  
 			function sendHFForm(form){  
 			    return PLX.Submit(form, { 
@@ -622,6 +626,9 @@ class HFcrud{
 					        var jsons = jQuery.parseJSON(response);
 					        if(jsons.result == 'ok'){
 						        reload(jsons.tableID,{target:'table'+jsons.tableID,preloader:'pr'});
+						    }
+						    if(jsons.result == 'reload'){
+						        location.reload();
 						    }
 						}else{
 							if(response==''){
@@ -1023,7 +1030,7 @@ class HFcrud{
 			      
 			        <div class="panel panel-default">
 					  <!-- Default panel contents -->
-					  <form id="formEdit'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="POST" onsubmit="return sendHFForm(this);" enctype="multipart/form-data">
+					  <form id="formEdit'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="POST" onsubmit="$(\'#edit'.$modalID.'\').modal(\'hide\');return sendHFForm(this);" enctype="multipart/form-data">
 					  <input type="hidden" name="_action" value="edit">
 					  <input type="hidden" name="_tableID" value="'.$this->genID.'">
 					  <input type="hidden" name="_tableName" value="'.$this->tableName.'">
@@ -1117,7 +1124,7 @@ class HFcrud{
 									break;
 									case "imageSelect":
 										$dats .= '
-											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'/>
+											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'" >
 											';
 									break;
@@ -1179,7 +1186,7 @@ class HFcrud{
 			      
 			        <div class="panel panel-default">
 					  <!-- Default panel contents -->
-					  <form id="formAdd'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="post" onsubmit="return sendHFForm(this);" enctype="multipart/form-data">
+					  <form id="formAdd'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="post" onsubmit="$(\'#add'.$modalID.'\').modal(\'hide\');return sendHFForm(this);" enctype="multipart/form-data">
 					  <input type="hidden" name="_action" value="add">
 					  <input type="hidden" name="_tableID" value="'.$this->genID.'">
 					  <input type="hidden" name="_tableName" value="'.$this->tableName.'">
