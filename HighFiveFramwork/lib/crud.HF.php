@@ -920,17 +920,17 @@ class HFcrud{
 			
 			//Creating the tool stuff
 			if($this->ajaxify === false){
-				if($tools) $dats.='<td data-title="'.(isset($titles['tools'])?$titles['tools']:"Tools").'" class="text-center"><div class="btn-group" role="group" aria-label="...">';
+				if(isset($tools) && $tools) $dats.='<td data-title="'.(isset($titles['tools'])?$titles['tools']:"Tools").'" class="text-center"><div class="btn-group" role="group" aria-label="...">';
 				if($this->view) $dats.='<a href="'.eval('return "'.$this->viewPage.'";').'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button></a>';
 				if($this->edit) $dats.='<a href="'.eval('return "'.$this->editPage.'";').'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button></a>';
 				if($this->delete) $dats.='<a href="'.eval('return "'.$this->deletePage.'";').'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></a>';
 			}else{
-				if($tools) $dats.='<td data-title="'.(isset($titles['tools'])?$titles['tools']:"Tools").'" class="text-center"><div class="btn-group" role="group" aria-label="...">';
+				if(isset($tools) && $tools) $dats.='<td data-title="'.(isset($titles['tools'])?$titles['tools']:"Tools").'" class="text-center"><div class="btn-group" role="group" aria-label="...">';
 				if($this->view) $dats.='<button type="button" class="btn btn-default" data-toggle="modal" data-target="#view'.$modalID.'"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>';
 				if($this->edit) $dats.='<button type="button" class="btn btn-default" data-toggle="modal" data-target="#edit'.$modalID.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>';
 				if($this->delete) $dats.='<button type="button" class="btn btn-default" onclick="if(confirm(\''.LANG_DELETE_CONFIRM.'\'))deleteRow('.$tr[$idField].',\''.$this->tableName.'\','.$this->genID.',{target:\'table'.$this->genID.'\',preloader:\'pr\'});"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>';
 			}
-			if($tools) $dats.="</div></td>";	
+			if(isset($tools) && $tools) $dats.="</div></td>";	
 
 
 			$dats.= '</tr>';
