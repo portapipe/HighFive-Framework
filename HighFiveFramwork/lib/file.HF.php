@@ -2,7 +2,7 @@
 class HFfile{
 	
 	public $resizeSize = false;
-	public $quality = 70;
+	public $quality = 90;
 	public $oldFile = "";
 	
 	/*! Setting this will automagically resize the image you'll upload! (max width/height)
@@ -92,6 +92,7 @@ class HFfile{
 		RESIZE? Just set '$this->setResizeSize = 100;' where 100 is the pixel integer, change it as you like */
 	function uploadImage($imageFieldName,$directory="upload/",$maxFileSize=3500,$extensions=array('jpg','jpeg','png','gif'),$rewriteIfExists=false){
 		
+		global $HF;
 		
 		 if(isset($_FILES[$imageFieldName]))
 	       {
@@ -137,7 +138,7 @@ class HFfile{
 					if($this->oldFile!="") $this->deleteFile($this->oldFile,$directory);
 					
 					
-					if($this->resizeSize!=false&&$this->resizeSize!="") HFfile::compressImage($directory.$basename,$directory.$basename,90,$resizeSize);
+					if($this->resizeSize!=false && $this->resizeSize!="") $this->compressImage($directory.$basename,$directory.$basename,90,$this->resizeSize);
 					
 					return array("imageName"=>$basename,"extension"=>$extension,"nameWithoutExtension"=>$name.$increment);
 					
