@@ -42,10 +42,11 @@ class HFdb {
 	function insert($tableName, $array){
 		
 		if(!is_array($array)){ echo "Array is needed in HFdb::insert() function! The second parameter must be an assoc array. Read the docs!"; die; }
-		
+		$keys = null;
+		$values = null;
 		foreach($array as $k=>$v){
 			
-			if(isset($keys)){ $keys.=","; $values.=","; }
+			if($keys!=null){ $keys.=","; $values.=","; }
 			$keys .= $k;
 			if(is_numeric($v)){
 				$values .= $v;
