@@ -1180,13 +1180,13 @@ class HFcrud{
 					
 					$dats.='<div class="panel-heading">'.(isset($titles[$k])?$titles[$k]:$k).'</div>
 					';
-					
+					$value = "";
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
 						if($value!="") eval($phpcode[$k]);
 						$value = $value;
 					}else{
-						$value =$ogArray[$ktr][$k];
+						if(isset($ogArray[$ktr][$k])) $value =$ogArray[$ktr][$k];
 					}
 					
 					if($k == $this->id){
@@ -1198,7 +1198,7 @@ class HFcrud{
 									';
 							
 						if(!isset($fieldType[$k])){
-							$dats .= '<p><input type="text" class="form-control" name="'.$k.'" value="" style="width:100%" '.($disabled[$k]?'readonly':'').'></p>';
+							$dats .= '<p><input type="text" class="form-control" name="'.$k.'" value="" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'></p>';
 						}else{
 							
 							foreach($fieldType[$k] as $kf=>$vf){
