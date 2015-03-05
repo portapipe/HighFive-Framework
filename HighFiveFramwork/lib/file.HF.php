@@ -138,7 +138,7 @@ class HFfile{
 					if($this->oldFile!="") $this->deleteFile($this->oldFile,$directory);
 					
 					
-					if($this->resizeSize!=false && $this->resizeSize!="") $this->compressImage($directory.$basename,$directory.$basename,90,$this->resizeSize);
+					if($this->resizeSize!=false && $this->resizeSize!="") $this->compressImage($directory.$basename,$directory.$basename);
 					
 					return array("imageName"=>$basename,"extension"=>$extension,"nameWithoutExtension"=>$name.$increment);
 					
