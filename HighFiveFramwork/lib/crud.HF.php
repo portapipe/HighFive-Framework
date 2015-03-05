@@ -1205,7 +1205,7 @@ class HFcrud{
 								switch($kf){
 									case "boolean":
 										$dats .= '
-										<div class="radio" '.($disabled[$k]?'disabled="disabled"':'').'>
+										<div class="radio" '.(isset($disabled[$k]) && $disabled[$k]?'disabled="disabled"':'').'>
 											<label>
 												<input type="radio" name="'.$k.'" value="1"> '.LANG_YES.'
 												<br>
@@ -1216,17 +1216,17 @@ class HFcrud{
 									break;
 									case "textArea":
 										$dats .= '
-											<textarea class="form-control" rows="10" name="'.$k.'" '.($disabled[$k]?'readonly':'').'></textarea>
+											<textarea class="form-control" rows="10" name="'.$k.'" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'></textarea>
 											';
 									break;
 									case "password":
 										$dats .= '
-											<input type="password" class="form-control" name="'.$k.'" style="width:100%" '.($disabled[$k]?'readonly':'').'>
+											<input type="password" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'">
 											';
 									break;
 									case "select":
-										$dats .= '<select class="form-control" name="'.$k.'" '.($disabled[$k]?'disabled':'').'>';
+										$dats .= '<select class="form-control" name="'.$k.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'>';
 										
 										foreach($vf as $optk=>$optv){
 											$dats .= '<option class="form-control" value="'.$optk.'">'.$optv.'</option>';
@@ -1241,17 +1241,17 @@ class HFcrud{
 									break;
 									case "radio":
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="'.$optk.$optv.$k.'radio" value="'.$optk.'" '.($disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="'.$optk.$optv.$k.'radio" value="'.$optk.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "fileSelect":
 										$dats .= '
-											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.($disabled[$k]?'readonly':'').'>
+											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											';
 									break;
 									case "imageSelect":
 										$dats .= '
-											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.($disabled[$k]?'readonly':'').'>
+											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											';
 									break;
 									default:
