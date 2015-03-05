@@ -129,7 +129,7 @@ if(isset($_POST["_action"])){
 							$hf_file = new HFfile();
 							
 							$data[$chiave] = "";
-							if($v['resizePixel']!=false) HFfile::setResizeSize($v['resizePixel']);
+							if($v['resizePixel']!=false) $hf_file->setResizeSize($v['resizePixel']);
 							$json = $hf_file->uploadImage($chiave,$v['uploadFolder'],$v['maxFileSize'],$v['allowedFiles'],$v['rewriteIfExists']);
 							if(!is_array($json)){
 								echo "Error edit image: ". $json;
@@ -677,18 +677,19 @@ class HFcrud{
 				return $class->setPage($page)->generate(false);
 			}
 			function deleteRow($id,$tableName,$tableID){
+				global $HF;
 				$class = unserialize(base64_decode($_SESSION["_class".$tableID]));
-				HFdb::delete($id,$tableName);
+				$HF->db->delete($id,$tableName);
 				//Deleting files and images if loaded
 				foreach($class->titles as $k=>$v){
 					if(isset($class->fieldType[$k]['fileSelect']) || isset($class->fieldType[$k]['imageSelect'])){
-						$dir = $class->fieldType[$k]['fileSelect']['uploadFolder'];
-						if($dir=="") $dir = $class->fieldType[$k]['imageSelect']['uploadFolder'];
+						if(isset($class->fieldType[$k]['fileSelect']['uploadFolder'])) $dir = $class->fieldType[$k]['fileSelect']['uploadFolder'];
+						if(isset($class->fieldType[$k]['imageSelect']['uploadFolder'])) $dir = $class->fieldType[$k]['imageSelect']['uploadFolder'];
 
 						foreach($class->data as $fk=>$fv){
 							//Actual delete
 							if($fv[$class->id]==$id){
-								if($fk==$k) HFfile::deleteFile($fv[$k],$dir);
+								if($fk==$k) $HF->file->deleteFile($fv[$k],$dir);
 							}
 						}
 					}
@@ -897,7 +898,7 @@ class HFcrud{
 							$dats.='<img src="'.$v.'" alt="" style="max-height:200px">';
 						}
 					}elseif(isset($fieldType[$k]["fileSelect"])&&$v!=""){
-						if(HFurl::isLocal($v)){
+						if($HF->url->isLocal($v)){
 							$dats.='<a href="http://'.$_SERVER['HTTP_HOST'].'/'.$fieldType[$k]['fileSelect']['uploadFolder'].($fieldType[$k]['fileSelect']['uploadFolder'][strlen($fieldType[$k]['fileSelect']['uploadFolder'])-1]!="/"?"/":"").$v.'">'.$v.'</a>';
 						}else{
 							$dats.='<a href="'.$v.'">'.(strlen($v)>20? substr($v, 0,18)."...".substr($v,strlen($v)-15,strlen($v)):$v).'</a>';
