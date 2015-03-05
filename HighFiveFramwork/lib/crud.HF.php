@@ -1014,7 +1014,7 @@ class HFcrud{
 			# ======================= #
 			# ==== 	 EDIT MODAL  ==== #
 			# ======================= #
-			echo count($ogArray);
+
 			if(count($ogArray)>0){
 			$dats.= '
 			
