@@ -85,10 +85,10 @@ class HFdb {
 	function update($id, $tableName, $values){
 		
 		if(!is_array($values)) return false;
-		
+		$val = null;
 		foreach($values as $k=>$v){
 			
-			if(isset($val)){ $val.=","; }
+			if($val!=null){ $val.=","; }
 			$val .= $k."=";
 			if(is_numeric($v)){
 				$val .= $v;
