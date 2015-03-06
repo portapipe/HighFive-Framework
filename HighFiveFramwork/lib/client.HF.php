@@ -30,7 +30,9 @@ class HFclient{
 	
 	function login($id,$data=""){
 		if(!$this->isLogged()){
-			$_SESSION['HF_user'] = HFstring::encrypt(json_encode(array('id'=>$id,'data'=>$data)));
+			//if(is_array($data))$data = json_encode($data);
+			global $HF;
+			$_SESSION['HF_user'] = $HF->string->encrypt(json_encode(array('id'=>$id,'data'=>$data)));
 		}
 	}
 	
@@ -41,7 +43,8 @@ class HFclient{
 	function getLoggedId(){
 		if(!$this->isLogged()) return false;
 		if(!isset($_SESSION['HF_user'])) return false;
-		$data = json_decode(HFstring::decrypt($_SESSION['HF_user']));
+		global $HF;
+		$data = json_decode($HF->string->decrypt($_SESSION['HF_user']));
 		return $data->id;
 		
 	}
@@ -49,7 +52,8 @@ class HFclient{
 	function getLoggedData(){
 		if(!$this->isLogged()) return false;
 		if(!isset($_SESSION['HF_user'])) return false;
-		$data = json_decode(HFstring::decrypt($_SESSION['HF_user']));
+		global $HF;
+		$data = json_decode($HF->string->decrypt($_SESSION['HF_user']));
 		return $data->data;
 	}
 	
