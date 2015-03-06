@@ -29,11 +29,12 @@ class HFclient{
 	}
 	
 	function login($id,$data=""){
-		if(!$this->isLogged()){
+		
+		//if(!$this->isLogged()){
 			//if(is_array($data))$data = json_encode($data);
 			global $HF;
 			$_SESSION['HF_user'] = $HF->string->encrypt(json_encode(array('id'=>$id,'data'=>$data)));
-		}
+		//}
 	}
 	
 	function logout(){
