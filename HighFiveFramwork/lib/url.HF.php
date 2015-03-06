@@ -31,4 +31,26 @@ class HFurl {
 		return $this;
 	}
 	
+	/*! This function will print a <script> with a JS equivalent function of changeUrl(),
+		needed for async url change */
+	function changeUrlJs(){
+		return "<script>function changeUrl(newUrl,actionOnUrlChange,historyTitle,passData){
+			actionOnUrlChange = typeof actionOnUrlChange !== 'undefined' ? actionOnUrlChange : null;
+			historyTitle = typeof historyTitle !== 'undefined' ? historyTitle : null;
+			passData = typeof passData !== 'undefined' ? passData : null;
+			window.history.pushState(passData, historyTitle, newUrl);
+			window.onpopstate = function(event) {
+				actionOnUrlChange
+			}
+		}</script>";
+	}
+	function redirect($link){
+	
+		return '
+		<script language="javascript" type="text/javascript">
+				window.location = "'.$link.'";
+		</script>
+		';
+	}
+
 }
