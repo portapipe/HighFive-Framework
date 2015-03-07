@@ -697,7 +697,7 @@ class HFcrud{
 								
 				if(isset($newUrl)){
 					$newUrl =  "
-					<script> changeUrl('".$newUrl."'); </script>
+					<script> changeUrl('".$newUrl."'+window.location.hash); </script>
 					";
 				}
 				
