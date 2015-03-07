@@ -223,6 +223,7 @@ class HFcrud{
 	
 	public $justReturn = false;
 	
+	
 	/*! Needed to have a clear settings, instead you can have a setting you don't want so use it at the first beginning to inizialize the settings */
 	function init(){
 		$this->tableName = "";
@@ -523,7 +524,8 @@ class HFcrud{
 		The system MUST know which is your unique id field!
 		Default field name is "id" . CASE INSENSITIVE! */
 	function idField($idFieldName){
-		$this->id = strtolower($idFieldName);
+		$this->id = $idFieldName;
+		//$this->orderBy($idFieldName,"ASC");
 		return $this;
 	}
 	
@@ -684,7 +686,25 @@ class HFcrud{
 			function setPage($tableID,$page){
 				$class = unserialize(base64_decode($_SESSION["_class".$tableID]));
 				$class->page = $page;
-				return $class->setPage($page)->generate(false);
+				//Change URL Page in Async!
+				$query = $_GET;
+				// Replace the parameter
+				$query['page'.$tableID] = $page;
+				// Rebuilding URL
+				$query_result = http_build_query($query);
+				// New Link
+				$newUrl = strtok($_SERVER["REQUEST_URI"],'?')."?".$query_result;
+								
+				if(isset($newUrl)){
+					$newUrl =  "
+					<script> changeUrl('".$newUrl."'); </script>
+					";
+				}
+				
+				$class->settingNewPage = true;
+				
+				
+				return $class->setPage($page)->generate(false).$newUrl;
 			}
 			function deleteRow($id,$tableName,$tableID){
 				global $HF;
@@ -752,6 +772,13 @@ class HFcrud{
 		# ==================== #
 		# ==== PAGINATION ==== #
 		# ==================== #
+		
+		if(!isset($this->settingNewPage) && isset($_GET['page'.$this->genID])){
+			$this->setPage($_GET['page'.$this->genID]);
+		}else{
+			unset($this->settingNewPage);
+		}
+		
 		$pagination = new HFpagination();
 		$pag = $pagination->setPage($this->page)
 						  ->setResultsPerPage($this->resultsPerPage)
@@ -772,17 +799,16 @@ class HFcrud{
 			}
 		}
 		
-		$HFdb = new HFdb();
 
 		if(count($this->data)==0){
 			if($this->tableName!=""){
-				$array = $HFdb->sqlToArray("SELECT * FROM ".$this->tableName);
+				$array = $HF->db->sqlToArray("SELECT * FROM ".$this->tableName);
 				$this->sql = "SELECT * FROM ".$this->tableName;
 				$pag->setSql($this->sql);
 				if(count($array)>0){
 					$this->setData($array);
 				}else{
-					$array2 = $HFdb->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
+					$array2 = $HF->db->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
 					foreach($array2 as $v){
 						$titles[$v['Field']] = $v['Field'];
 						$this->setTitle($titles);
@@ -816,18 +842,39 @@ class HFcrud{
 		//HideAll part, unset all that will be hidden everywhere
 		foreach($array as $k1=>$v1){
 			foreach($v1 as $k2=>$v2){
-				if(in_array($k2, $this->hideAll)){
-					unset($array[$k1][$k2]);
-					unset($titles[$k2]);
-					unset($ogArray[$k1][$k2]);
-					unset($ogTitles[$k2]);
-					unset($fieldType[$k2]);
+				if(in_array($k2, $this->hideAll)&&$k2!=$this->id){
+					if(isset($array[$k1][$k2])) unset($array[$k1][$k2]);
+					if(isset($titles[$k2])) unset($titles[$k2]);
+					if(isset($ogArray[$k1][$k2])) unset($ogArray[$k1][$k2]);
+					if(isset($ogTitles[$k2])) unset($ogTitles[$k2]);
+					if(isset($fieldType[$k2])) unset($fieldType[$k2]);
 				}
 			}
 		}
 		
+		//Add async function for changing URL
+		/*if(!isset($this->ajaxUrl)){
+			$this->ajaxUrl = true;
+			echo $HF->url->changeUrlJs();
+		}*/
+		//Change page Async
+		if($newTable==true){
+				if(!isset($this->ajaxUrl)){
+				$this->ajaxUrl = true;
+				echo $HF->url->changeUrlJs();
+			}
+		}
+		
+		
+			
 		//Starting check for order and recreate an ordered array
 		foreach($array as $k=>$v){
+			
+			//Fix the orderByField, if the standard one doesn't exists
+			if(!isset($v[$this->orderByField])){
+				$this->orderBy($this->id,"ASC");
+			}
+			
 			
 			if(isset($phpcode[$this->orderByField])){
 				$value = $v[$this->orderByField];
@@ -856,7 +903,7 @@ class HFcrud{
 			$tits.="$t";
 			//check if this is the order field and print a simbol
 			if($this->orderByField==$k){
-				$tits.=' <span class="glyphicon glyphicon-chevron-'.($this->orderDirection=="ASC"?'down':'up').' pull-right" aria-hidden="true"></span>';
+				$tits.=' <span class="glyphicon glyphicon-chevron-'.($this->orderDirection=="ASC"?'up':'down').' pull-right" aria-hidden="true"></span>';
 			}
 			//close the table head
 			$tits.="</th>";
@@ -1019,6 +1066,7 @@ class HFcrud{
 			# ======================= #
 
 			if(count($ogArray)>0){
+			if($this->edit){
 			$dats.= '
 			
 			<!-- Modal Edit -->
@@ -1030,7 +1078,7 @@ class HFcrud{
 			        <h4 class="modal-title" id="editModal'.$modalID.'">'.LANG_EDIT.'</h4>
 			      </div>
 			      <div class="modal-body">
-			      
+
 			        <div class="panel panel-default">
 					  <!-- Default panel contents -->
 					  <form id="formEdit'.$modalID.'" action="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" method="POST" onsubmit="$(\'#edit'.$modalID.'\').modal(\'hide\');return sendHFForm(this);" enctype="multipart/form-data">
@@ -1164,6 +1212,7 @@ class HFcrud{
 			
 			}
 			}
+			} // close if(this->edit)
 		}
 		# =================== #
 		# ==== ADD MODAL ==== #
@@ -1340,6 +1389,9 @@ class HFcrud{
 			$pag
 			
 HTML;
+
+		
+		
 		//Setting Table ID for the refresh thing
 		$_SESSION["_class".$this->genID] = base64_encode(serialize($this));
 		
