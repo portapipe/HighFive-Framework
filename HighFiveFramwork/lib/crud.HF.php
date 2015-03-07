@@ -24,8 +24,11 @@ if(isset($_POST["_action"])){
 	
 	foreach($_FILES as $k=>$v){
 		if($k[0]!="_"){
-			if($v['name']!="") $data[$k] = $v;
+			if($v['name']!=""){
+				$data[$k] = $v;
+			}
 		}
+		$fileReturn = true;
 	}
 	if(count($data)==0){
 		echo "No data passed on CRUD!";
@@ -166,7 +169,7 @@ if(isset($_POST["_action"])){
 	}
 	
 	if(!isset($stop)){
-		if(isset($_FILES)){
+		if(isset($fileReturn)){
 			echo '{"result":"reload"}';
 		}else{
 			echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'"}';
