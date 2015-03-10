@@ -1157,7 +1157,7 @@ class HFcrud{
 										$dats .= '</select>';
 									break;
 									case "checkbox":
-										$data = explode(",", $ogArray[$ktr][$k]);
+										//$data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
 											$dats .= '<div class="checkbox '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
 										}
@@ -1310,9 +1310,9 @@ class HFcrud{
 										$dats .= '</select>';
 									break;
 									case "checkbox":
-										$data = explode(",", $ogArray[$ktr][$k]);
+										//$data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox '.($disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
+											$dats .= '<div class="checkbox '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
 										}
 									break;
 									case "radio":
