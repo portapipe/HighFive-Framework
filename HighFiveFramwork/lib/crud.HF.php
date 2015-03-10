@@ -34,10 +34,27 @@ if(isset($_POST["_action"])){
 		echo "No data passed on CRUD!";
 	}
 	
-	
 	$class = unserialize(base64_decode($_SESSION["_class".$_POST['_tableID']]));
 	//print_r($data);die;
 	//pirnt_r($class->fieldType);die;
+	/*array("functionName"=>$validationFunctionName,
+							   "option"=>$option,
+							   "errorMessage"=>$errorMessage);*/
+							   
+	//Let's validate the data!
+	if($_POST['_action']=="edit"|| $_POST['_action']=="add"){
+		$validation = $class->validation;
+		include_once(HF_LIB_DIR."validate.HF.php");
+		$hf_validate = new HFvalidate();
+		foreach($data as $chiave=>$valore){
+			if(!isset($validation[$chiave])) continue;
+			eval('if($hf_validate->'.$validation[$chiave]['functionName'].'("'.$valore.'","'.$validation[$chiave]['option'].'")!=true){
+					echo "'.$validation[$chiave]['errorMessage'].'";die;
+				}');
+		}
+	}
+	
+	
 	switch($_POST['_action']){
 		case "edit":
 
@@ -210,6 +227,7 @@ class HFcrud{
 	public $hideAll = array();
 	public $id = "id";
 	public $disabled = array();
+	public $validation = "";
 	
 	public $orderByField = "id";
 	public $orderDirection = "DESC";
@@ -246,6 +264,7 @@ class HFcrud{
 		$this->hide = array();
 		$this->hideAll = array();
 		$this->id = "id";
+		$this->validation = "";
 	
 		$this->orderByField = "id";
 		$this->orderDirection = "DESC";
@@ -390,6 +409,16 @@ class HFcrud{
 		return $this;
 	}
 	
+	function validate($field,$validationFunctionName,$option="",$errorMessage="Error validating field!"){
+		$array=$this->validation;
+		$array[$field] = array("functionName"=>$validationFunctionName,
+							   "option"=>$option,
+							   "errorMessage"=>$errorMessage);
+		
+		$this->validation = $array;
+		return $this;
+	}
+	
 	function justReturn(){
 		$this->justReturn = true;
 		return $this;
@@ -516,7 +545,15 @@ class HFcrud{
 		$this->fieldType = $array;
 		return $this;
 	}
-	
+	/*! Create a field to pass entirely (don't forget to pass the name="" to pass it via form!)
+		The addOnly make the field only active in the add modal, like for created field timestamp.
+		If true, the setPhp() (if set) is used to show the value */
+	function customField($fieldName,$value,$addOnly=false){
+		$array = $this->fieldType;
+		$array[$fieldName]['customField'] = array("value"=>$value,"addOnly"=>$addOnly);
+		$this->fieldType = $array;
+		return $this;
+	}
 	/* !-------------------------------FIELD TYPE END */
 	
 	
@@ -1157,9 +1194,9 @@ class HFcrud{
 										$dats .= '</select>';
 									break;
 									case "checkbox":
-										//$data = explode(",", $ogArray[$ktr][$k]);
+										$data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
 										}
 									break;
 									case "radio":
@@ -1178,6 +1215,13 @@ class HFcrud{
 											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'" >
 											';
+									break;
+									case "customField":
+										if($vf['addOnly']==true){
+											$dats .= $value;
+										}else{
+											$dats .= $vf['value'];
+										}
 									break;
 									default:
 										echo "";
@@ -1257,7 +1301,7 @@ class HFcrud{
 					$dats.='<div class="panel-heading">'.(isset($titles[$k])?$titles[$k]:$k).'</div>
 					';
 					$value = "";
-					if(isset($phpcode[$k])){
+					if(isset($phpcode[$k]) && isset($ogArray[$ktr][$k])){
 						$value = $ogArray[$ktr][$k];
 						if($value!="") eval($phpcode[$k]);
 						$value = $value;
@@ -1310,9 +1354,9 @@ class HFcrud{
 										$dats .= '</select>';
 									break;
 									case "checkbox":
-										//$data = explode(",", $ogArray[$ktr][$k]);
+										if(isset($ogArray[$ktr][$k])) $data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
+											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
 										}
 									break;
 									case "radio":
@@ -1329,6 +1373,9 @@ class HFcrud{
 										$dats .= '
 											<input type="file" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
 											';
+									break;
+									case "customField":
+										$dats .= $vf['value'];
 									break;
 									default:
 										echo "";
