@@ -46,6 +46,25 @@ class HFvalidate{
 		return true;
 	}
 	
+	function minLen($string,$minChars){
+		if(strlen($string)<$minChars){
+			return false;
+		}
+		return true;
+	}
 	
+	function maxLen($string,$maxChars){
+		if(strlen($string)>$maxChars){
+			return false;
+		}
+		return true;
+	}
+	
+	function minMaxLen($string,$minChars,$maxChars){
+		if(strlen($string)>=$minChars && strlen($string)<=$maxChars){
+			return true;
+		}
+		return false;
+	}
 	
 }
