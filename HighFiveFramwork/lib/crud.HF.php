@@ -1168,7 +1168,7 @@ class HFcrud{
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
 						if($value!="") eval($phpcode[$k]);
-						$value = $value;
+						//$value = $value;
 					}else{
 						$value =$ogArray[$ktr][$k];
 					}
@@ -1224,7 +1224,7 @@ class HFcrud{
 									case "checkbox":
 										$data = explode(",", $ogArray[$ktr][$k]);
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
+											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "radio":
@@ -1245,7 +1245,10 @@ class HFcrud{
 											';
 									break;
 									case "customField":
+										//If only in add show the value
 										if($vf['addOnly']==true){
+											//check if the value is modified by phpvisiblecode
+											if(isset($phpvisiblecode[$k]) && $value!="") eval($phpvisiblecode[$k]);
 											$dats .= $value;
 										}else{
 											$dats .= $vf['value'];
