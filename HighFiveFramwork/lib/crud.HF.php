@@ -48,9 +48,11 @@ if(isset($_POST["_action"])){
 		$hf_validate = new HFvalidate();
 		foreach($data as $chiave=>$valore){
 			if(!isset($validation[$chiave])) continue;
-			eval('if($hf_validate->'.$validation[$chiave]['functionName'].'("'.$valore.'","'.$validation[$chiave]['option'].'")!=true){
-					echo "'.$validation[$chiave]['errorMessage'].'";die;
+			foreach($validation[$chiave] as $keyvalid=>$valid){
+				eval('if($hf_validate->'.$validation[$chiave][$keyvalid]['functionName'].'("'.$valore.'","'.$validation[$chiave][$keyvalid]['option'].'")!=true){
+					echo "'.$validation[$chiave][$keyvalid]['errorMessage'].'";die;
 				}');
+			}
 		}
 	}
 	
@@ -222,6 +224,7 @@ class HFcrud{
 	public $deletePage = 'delete.php?id=$id';
 	
 	public $php = "";
+	public $visiblePhp = "";
 	public $fieldType = array();
 	public $hide = array();
 	public $hideAll = array();
@@ -260,6 +263,7 @@ class HFcrud{
 		$this->deletePage = 'delete.php?id=$id';
 	
 		$this->php = "";
+		$this->visiblePhp = "";
 		$this->fieldType = array();
 		$this->hide = array();
 		$this->hideAll = array();
@@ -409,9 +413,26 @@ class HFcrud{
 		return $this;
 	}
 	
+	/*! Like setPhp() but this will not be used for ordering!
+		Needed if you want to add tags or other prefix/postfix without breaking the order
+		IMPORTANT! This will be ADDED to the existing setPhp() of the field!
+	*/
+	function setVisiblePhp($field,$code=""){
+		$array=$this->visiblePhp;
+		if(is_array($field)){
+			foreach($field as $k=>$v){
+				$array[$k] = $v;
+			}
+		}else{
+			$array[$field] = $code;
+		}
+		$this->visiblePhp = $array;
+		return $this;
+ 	}
+	
 	function validate($field,$validationFunctionName,$option="",$errorMessage="Error validating field!"){
 		$array=$this->validation;
-		$array[$field] = array("functionName"=>$validationFunctionName,
+		$array[$field][] = array("functionName"=>$validationFunctionName,
 							   "option"=>$option,
 							   "errorMessage"=>$errorMessage);
 		
@@ -861,6 +882,7 @@ class HFcrud{
 		$array = $this->data;
 		$titles = $this->titles;
 		$phpcode = $this->php;
+		$phpvisiblecode = $this->visiblePhp;
 		$hide = $this->hide;
 		$disabled = $this->disabled;
 
@@ -914,11 +936,11 @@ class HFcrud{
 			
 			
 			if(isset($phpcode[$this->orderByField])){
-				$value = $v[$this->orderByField];
+				$value = strtolower($v[$this->orderByField]);
 				if($value!="") eval($phpcode[$this->orderByField]);
 				$orderValue[$k] = $value;
 			}else{
-				$orderValue[$k] = $v[$this->orderByField];
+				$orderValue[$k] = strtolower($v[$this->orderByField]);
 			}
 			
 		}
@@ -937,7 +959,7 @@ class HFcrud{
 			//Stuff to order the colums based on the column you click
 			$tits.='<th onclick="orderBy(\''.$k.'\','.$this->genID.',{target:\'table'.$this->genID.'\',preloader:\'pr\'})" style="cursor:row-resize;">';
 			//Write the value
-			$tits.="$t";
+			$tits.= htmlspecialchars_decode($t);
 			//check if this is the order field and print a simbol
 			if($this->orderByField==$k){
 				$tits.=' <span class="glyphicon glyphicon-chevron-'.($this->orderDirection=="ASC"?'up':'down').' pull-right" aria-hidden="true"></span>';
@@ -975,14 +997,22 @@ class HFcrud{
 				if(isset($hide[$k])) continue;
 				if($idField == strtolower($k)) $id = $v;
 				
-				$dats.= "<td data-title=\"".$titles[$k]."\">";
+				$dats.= "<td data-title=\"".strip_tags($titles[$k])."\">";
 				
 				//Check if the value to be written in the table has setPhp() set to it
 				if(isset($phpcode[$k])){
 					$value = $v;
-					if($value!="") eval($phpcode[$k]);
+					if($value!=""){
+						eval($phpcode[$k]);
+						if(isset($phpvisiblecode[$k])) eval($phpvisiblecode[$k]);
+					}
 					$dats .= nl2br($value);
 				}else{
+					if(isset($phpvisiblecode[$k])&&$v!=""){
+						$value = $v;
+						eval($phpvisiblecode[$k]);
+						$v = $value;
+					}
 					//Check if passed value is an image or a file, if not is printed as is
 					if(isset($fieldType[$k]["imageSelect"])&&$v!=""){
 						if($HF->url->isLocal($v)){
@@ -1023,9 +1053,7 @@ class HFcrud{
 			$dats.= '</tr>';
 			
 			
-			
-			
-			
+						
 			
 		if($this->ajaxify === true){
 			# ==================== #
