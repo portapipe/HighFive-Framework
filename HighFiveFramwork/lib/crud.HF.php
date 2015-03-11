@@ -1380,7 +1380,7 @@ class HFcrud{
 									case "password":
 										$dats .= '
 											<input type="password" class="form-control" name="'.$k.'" style="width:100%" '.(isset($disabled[$k]) && $disabled[$k]?'readonly':'').'>
-											<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'">
+											'.(isset($ogArray[$ktr][$k])?'<input type="hidden" name="_old'.$k.'" value="'.$ogArray[$ktr][$k].'">':'').'
 											';
 									break;
 									case "select":
