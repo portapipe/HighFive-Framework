@@ -60,8 +60,8 @@ class HFmail{
 		
 		$mail->Subject = $subject;
 		
-		if($designPage!=""){
-			$mail->Body = basicDesign($body);
+		if($this->designPage!=""){
+			$mail->Body = $this->basicDesign($body);
 		}else{
 			$mail->Body = $body;
 		}
