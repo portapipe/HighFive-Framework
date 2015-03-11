@@ -8,7 +8,7 @@ if(isset($_POST["_action"])){
 	//echo '{"result":"ok","tableID":"'.$_POST['_tableID'].'","test":"yep"}';die; 
 	//echo "HSJSHASAHJSD";die;
 	//print_r($_FILES);die;
-	//print_r($_POST);die;
+	//print_r($_POST);die;
 	
 	$data = array();
 
@@ -1017,9 +1017,9 @@ class HFcrud{
 					if(isset($fieldType[$k]["imageSelect"])&&$v!=""){
 						if($HF->url->isLocal($v)){
 							$dats.='<img src="'.$fieldType[$k]['imageSelect']['uploadFolder'].($fieldType[$k]['imageSelect']['uploadFolder'][strlen($fieldType[$k]['imageSelect']['uploadFolder'])-1]!="/"?"/":"").$v.'"
-									 alt="" style="max-height:200px">';
+									 alt="" style="max-height:200px" class="img-responsive">';
 						}else{
-							$dats.='<img src="'.$v.'" alt="" style="max-height:200px">';
+							$dats.='<img src="'.$v.'" alt="" style="max-height:200px" class="img-responsive">';
 						}
 					}elseif(isset($fieldType[$k]["fileSelect"])&&$v!=""){
 						if($HF->url->isLocal($v)){
@@ -1087,10 +1087,17 @@ class HFcrud{
 					if(isset($phpcode[$k])){
 						$value = $ogArray[$ktr][$k];
 						if($value!="") eval($phpcode[$k]);
-						$value = $value;
+						if($value!=""&&isset($phpvisiblecode[$k])) eval($phpvisiblecode[$k]);
+						//$value = $value;
 					}else{
 						$value =$ogArray[$ktr][$k];
+						//$value = $v;
+						if($value!=""&&isset($phpvisiblecode[$k])&&$k!="") eval($phpvisiblecode[$k]);
+						//$v = $value;
 					}
+					
+					
+					
 					if(!isset($fieldType[$k])){
 							$dats.='<div class="panel-body"><p>'.nl2br($value).'</p></div>';
 					}else{
@@ -1099,7 +1106,7 @@ class HFcrud{
 							switch($kf){
 								case "imageSelect":
 									if($value!="") $dats.='<img src="'.$vf['uploadFolder'].($vf['uploadFolder'][strlen($vf['uploadFolder'])-1]!="/"?"/":"").$value.'"
-									 alt="" style="max-height:300px">';
+									 alt="" style="max-height:300px" class="img-responsive">';
 								break;
 								case "fileSelect":
 									if($value!="") $dats.='<a href="http://'.$_SERVER['HTTP_HOST'].'/'.$fieldType[$k]['fileSelect']['uploadFolder'].($fieldType[$k]['fileSelect']['uploadFolder'][strlen($fieldType[$k]['fileSelect']['uploadFolder'])-1]!="/"?"/":"").$value.'">'.$value.'</a>';
@@ -1229,7 +1236,7 @@ class HFcrud{
 									break;
 									case "radio":
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$optv.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "fileSelect":
@@ -1392,7 +1399,7 @@ class HFcrud{
 									break;
 									case "radio":
 										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio"><label><input type="radio" name="'.$k.'" id="'.$optk.$optv.$k.'radio" value="'.$optk.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="'.$optk.$k.'radio" value="'.$optk.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
 										}
 									break;
 									case "fileSelect":
