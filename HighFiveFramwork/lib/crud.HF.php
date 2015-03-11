@@ -322,6 +322,7 @@ class HFcrud{
 		$this->sql = $sql;
 		$data = $HF->db->sqlToArray($sql);
 		$this->data = $data;
+		$titles = array();
 		foreach($data as $v){
 			foreach($v as $k=>$v){
 				$titles[$k] = $k;
