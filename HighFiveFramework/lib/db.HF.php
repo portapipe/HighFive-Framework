@@ -114,8 +114,16 @@ class HFdb {
 	}
 	
 	
-	
-	
+	/*! This will create a perfect array key=>value for any select/radio of crud or anything you need! */
+	function makeSelectArray($tableName,$keyFieldName,$valueFieldName,$orderBy="id ASC"){
+		global $HF;
+		$array = $HF->db->sqlToArray("SELECT $keyFieldName,$valueFieldName FROM $tableName ORDER BY $orderBy");
+		$return = array();
+		foreach($array as $v){
+			$return[$v[$keyFieldName]]=$v[$valueFieldName];
+		}
+		return $return;
+	}
 	
 	
 }
