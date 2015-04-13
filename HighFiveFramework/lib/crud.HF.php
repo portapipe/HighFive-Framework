@@ -228,6 +228,7 @@ class HFcrud{
 	public $fieldType = array();
 	public $hide = array();
 	public $hideAll = array();
+	public $orderFields = array();
 	public $id = "id";
 	public $disabled = array();
 	public $validation = "";
@@ -267,6 +268,7 @@ class HFcrud{
 		$this->fieldType = array();
 		$this->hide = array();
 		$this->hideAll = array();
+		$this->orderFields = array();
 		$this->id = "id";
 		$this->validation = "";
 	
@@ -475,6 +477,22 @@ class HFcrud{
 		}
 		
 		$this->hideAll = $array;
+		return $this;
+	}
+	
+	/*! Just pass the field you want to hide from All the part of the crud, veeeery simple!
+		Array is ok too :) */
+	function orderFields($field){
+		$array=$this->orderFields;
+		if(!is_array($field)){
+			echo "ERRORE! orderFields() - Parameter MUST be an array";die;
+		}else{
+			foreach($field as $v){
+				$array[$v] = $v;
+			}
+		}
+		
+		$this->orderFields = $array;
 		return $this;
 	}
 	
@@ -941,6 +959,34 @@ class HFcrud{
 		//Starting check for order and recreate an ordered array
 		foreach($array as $k=>$v){
 			
+			
+			
+			/* ORDER FIELDS BY A USER ARRAY */
+			if(!empty($this->orderFields)){
+				if(count($v)!=count($this->orderFields)){
+					echo "ERROR Ordering Fields - Fields count are not the same, I think you've forgot some field...";die;
+				}
+				$orderFieldArray = $this->orderFields;
+				$newOrderFields = array();
+				$newOrderTitles = array();
+				foreach($orderFieldArray as $ordv){
+					if(!isset($v[$ordv])){
+						echo "ERROR in OrderField key! '$ordv' is not a valid key!";die;
+					}
+					$newOrderFields[$ordv] = $v[$ordv];
+					$newOrderTitles[$ordv] = $ordv;
+				}
+				$v = $newOrderFields;
+				$array[$k] = $v;
+				$ogArray[$k] = $v;
+				$titles = $newOrderTitles;
+				$ogTitles = $newOrderTitles;
+			}
+			/* END ORDER FIELD */
+			
+			
+			
+			
 			//Fix the orderByField, if the standard one doesn't exists
 			if(!isset($v[$this->orderByField])){
 				$this->orderBy($this->id,"ASC");
@@ -968,6 +1014,8 @@ class HFcrud{
 		foreach($titles as $k=>$t){
 			if(isset($hide[$k])) continue;
 			if(strtolower($k)=="tools") continue;
+			
+			
 			//Stuff to order the colums based on the column you click
 			$tits.='<th onclick="orderBy(\''.$k.'\','.$this->genID.',{target:\'table'.$this->genID.'\',preloader:\'pr\'})" style="cursor:row-resize;">';
 			//Write the value
@@ -1002,6 +1050,7 @@ class HFcrud{
 			$dats.= "<tr>";
 			$id = 0;
 			$modalID = $this->genID.$ktr;
+			
 			
 			foreach($tr as $k=>$v){
 				
