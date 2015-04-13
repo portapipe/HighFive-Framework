@@ -548,6 +548,17 @@ class HFcrud{
 		$this->fieldType = $array;
 		return $this;
 	}
+	/*! Multiple Checkbox (don't use it for boolean!), key will be values passed to the database, values the one you'll see as text */
+	function dateField($fieldName){
+		$array = $this->fieldType;
+		if(is_array($fieldName)){
+			foreach($fieldName as $v) $array[$v]['dateField'] = $v;
+		}else{
+			$array[$fieldName]['dateField'] = $fieldName;
+		}
+		$this->fieldType = $array;
+		return $this;
+	}
 	function fileSelect($fieldName,$uploadFolder="upload",$maxFileSize="2000",$allowedFiles=array("pdf","doc","txt"),$overwrite=false){
 		$array = $this->fieldType;
 		$array[$fieldName]['fileSelect'] = array("uploadFolder"=>$uploadFolder,
@@ -1259,8 +1270,34 @@ class HFcrud{
 											if(isset($phpvisiblecode[$k]) && $value!="") eval($phpvisiblecode[$k]);
 											$dats .= $value;
 										}else{
-											$dats .= $vf['value'];
+											$dats .= eval($vf['value']);
 										}
+									break;
+									case "dateField":
+										echo '<script>
+												if (typeof jQuery.ui == "undefined") {
+												  alert("You need to load jQuery UI to use dateField!");
+												}
+												</script>';
+												
+										$idNow = $ktr.$k.rand(0,100000);
+										$dats .= '
+										<input type="hidden" name="'.$k.'" value="'.$ogArray[$ktr][$k].'" id="datepickerForm'.$idNow.'">
+											<div id="datepicker'.$idNow.'"></div>
+									 	<script>
+									 	setTimeout(function() {
+
+										 	$( "#datepicker'.$idNow.'" ).datepicker({
+											 	dateFormat: "@",
+												onSelect: function(dateText, inst) {
+													var data=(dateText / 1000) +7200;
+													$("#datepickerForm'.$idNow.'").val(data);
+												},
+												defaultDate: $.datepicker.parseDate(\'@\', '.($ogArray[$ktr][$k]!=0?($ogArray[$ktr][$k]*1000):time()*1000).')
+											});
+										}, 1000);
+										</script>
+										';
 									break;
 									default:
 										echo "";
@@ -1414,7 +1451,31 @@ class HFcrud{
 											';
 									break;
 									case "customField":
-										$dats .= $vf['value'];
+										$dats .= eval($vf['value']);
+									break;
+									case "dateField":
+										echo '<script>
+												if (typeof jQuery.ui == "undefined") {
+												  alert("You need to load jQuery UI to use dateField!");
+												}
+												</script>';
+												
+										$idNow = $ktr.$k.rand(0,1000);
+										$dats .= '
+										<input type="hidden" name="'.$k.'" value="" id="datepickerForm'.$idNow.'">
+											<div id="datepicker'.$idNow.'"></div>
+									 	<script>
+									 	setTimeout(function() {
+										 	$( "#datepicker'.$idNow.'" ).datepicker({
+											 	dateFormat: "@",
+												onSelect: function(dateText, inst) {
+													var data=(dateText / 1000) +7200;
+													$("#datepickerForm'.$idNow.'").val(data);
+												}
+											});
+										}, 1000);
+										</script>
+										';
 									break;
 									default:
 										echo "";
