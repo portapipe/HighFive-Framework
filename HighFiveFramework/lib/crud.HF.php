@@ -46,14 +46,16 @@ if(isset($_POST["_action"])){
 		$validation = $class->validation;
 		include_once(HF_LIB_DIR."validate.HF.php");
 		$hf_validate = new HFvalidate();
+
 		foreach($data as $chiave=>$valore){
 			if(!isset($validation[$chiave])) continue;
 			foreach($validation[$chiave] as $keyvalid=>$valid){
-				eval('if($hf_validate->'.$validation[$chiave][$keyvalid]['functionName'].'("'.$valore.'","'.$validation[$chiave][$keyvalid]['option'].'")!=true){
-					echo "'.$validation[$chiave][$keyvalid]['errorMessage'].'";die;
+				eval('if($hf_validate->'.$validation[$chiave][$keyvalid]['functionName'].'("'.(!is_array($valore)?$valore:(count($valore)==0?'':count($valore))).'","'.$validation[$chiave][$keyvalid]['option'].'")!=true){
+					echo "'.$validation[$chiave][$keyvalid]['errorMessage'].' ('.(!is_array($valore)?$valore:(count($valore)==0?'':count($valore))).')";die;
 				}');
 			}
 		}
+		
 	}
 	
 	
@@ -969,18 +971,20 @@ class HFcrud{
 				$orderFieldArray = $this->orderFields;
 				$newOrderFields = array();
 				$newOrderTitles = array();
+				$newOrderTitlesOg = array();
 				foreach($orderFieldArray as $ordv){
 					if(!isset($v[$ordv])){
 						echo "ERROR in OrderField key! '$ordv' is not a valid key!";die;
 					}
 					$newOrderFields[$ordv] = $v[$ordv];
-					$newOrderTitles[$ordv] = $ordv;
+					$newOrderTitles[$ordv] = $titles[$ordv];
+					$newOrderTitlesOg[$ordv] = $ogTitles[$ordv];
 				}
 				$v = $newOrderFields;
 				$array[$k] = $v;
 				$ogArray[$k] = $v;
 				$titles = $newOrderTitles;
-				$ogTitles = $newOrderTitles;
+				$ogTitles = $newOrderTitlesOg;
 			}
 			/* END ORDER FIELD */
 			
