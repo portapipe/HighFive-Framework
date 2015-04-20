@@ -1288,21 +1288,27 @@ class HFcrud{
 									case "select":
 										$dats .= '<select class="form-control" name="'.$k.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'>';
 										
-										foreach($vf as $optk=>$optv){
-											$dats .= '<option class="form-control" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'selected':'').'>'.$optv.'</option>';
+										if(count($vf)>0&&is_array($vf)){
+											foreach($vf as $optk=>$optv){
+												$dats .= '<option class="form-control" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'selected':'').'>'.$optv.'</option>';
+											}
 										}
 										$dats .= '</select>';
 									break;
 									case "checkbox":
 										$data = explode(",", $ogArray[$ktr][$k]);
-										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
+										if(count($vf)>0&&is_array($vf)){
+											foreach($vf as $optk=>$optv){
+												$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'" '.(in_array($optk,$data)?'checked="checked"':'').'> '.$optv.'</label></div>';
+											}
 										}
 									break;
 									case "radio":
-										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
-										}
+										if(count($vf)>0&&is_array($vf)){
+											foreach($vf as $optk=>$optv){
+												$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="radio'.$optk.$k.'radio" value="'.$optk.'" '.($ogArray[$ktr][$k] == $optk?'checked="checked"':'').' '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											}
+										}	
 									break;
 									case "fileSelect":
 										$dats .= '
@@ -1484,13 +1490,17 @@ class HFcrud{
 									break;
 									case "checkbox":
 										if(isset($ogArray[$ktr][$k])) $data = explode(",", $ogArray[$ktr][$k]);
-										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
+										if(count($vf)>0&&is_array($vf)){
+											foreach($vf as $optk=>$optv){
+												$dats .= '<div class="checkbox checkbox-inline img-rounded '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="checkbox" name="'.$k.'[]" value="'.$optk.'"> '.$optv.'</label></div>';
+											}
 										}
 									break;
 									case "radio":
-										foreach($vf as $optk=>$optv){
-											$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="'.$optk.$k.'radio" value="'.$optk.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+										if(count($vf)>0&&is_array($vf)){
+											foreach($vf as $optk=>$optv){
+												$dats .= '<div class="radio radio-inline img-rounded" style="margin:3px; padding:3px; background-color:#eee;"><label><input type="radio" name="'.$k.'" id="'.$optk.$k.'radio" value="'.$optk.'" '.(isset($disabled[$k]) && $disabled[$k]?'disabled':'').'> '.$optv.'</label></div>';
+											}
 										}
 									break;
 									case "fileSelect":
