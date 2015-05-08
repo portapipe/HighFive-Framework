@@ -77,8 +77,7 @@ class HFdb {
 		
 		$sql  = "SELECT $theFields FROM $fromTable$where$limit";
 		
-		mysql_query($sql) or die ("Error with HFdb::select '$sql': " .mysql_error());
-		return $this;
+		return mysql_query($sql) or die ("Error with HFdb::select '$sql': " .mysql_error());
 	}
 
 	/*! Update values of id (param1) into a tableName (param2) with array's content (param3).
