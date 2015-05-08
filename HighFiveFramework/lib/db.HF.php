@@ -130,18 +130,20 @@ class HFdb {
 	}
 
 	function increment($id,$tableName,$tableField,$howMuch){
-		if(!is_numeric($id)) $id = "\"".$id."\"";
+		$idup = $id;
+		if(!is_numeric($id)) $id = '"'.$id.'"';
 		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
 		$number = $select[0][$tableField] + $howMuch;
-		$this->update($id,$tableName,array($tableField=>$number));
+		$this->update($idup,$tableName,array($tableField=>$number));
 		return $this;
 	}
 	
 	function decrement($id,$tableName,$tableField,$howMuch){
+		$idup = $id;
 		if(!is_numeric($id)) $id = "\"".$id."\"";
 		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
 		$number = $select[0][$tableField] - $howMuch;
-		$this->update($id,$tableName,array($tableField=>$number));
+		$this->update($idup,$tableName,array($tableField=>$number));
 		return $this;
 	}
 	
