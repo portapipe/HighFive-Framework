@@ -75,7 +75,7 @@ class HFdb {
 		if($where!="") $where = " WHERE ".$where;
 		if($limit!="") $limit = " LIMIT ".$limit;
 		
-		$sql  = "SELECT $theFields FROM $tableName$where$limit";
+		$sql  = "SELECT $theFields FROM $fromTable$where$limit";
 		
 		mysql_query($sql) or die ("Error with HFdb::select '$sql': " .mysql_error());
 		return $this;
