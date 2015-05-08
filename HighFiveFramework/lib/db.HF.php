@@ -100,6 +100,7 @@ class HFdb {
 			}
 			
 		}
+		if(!is_numeric($id)) $id = '"'.$id.'"';
 		$sql  = "UPDATE $tableName SET $val WHERE ".$this->idFieldName." =$id";
 		
 		mysql_query($sql) or die ("Error with HFdb::update '$sql': " .mysql_error());
@@ -109,7 +110,8 @@ class HFdb {
 	/*! Delete ID fromTable
 		D of CRUD
 	*/
-	function delete($ID,$fromTable){
+	function delete($id,$fromTable){
+		if(!is_numeric($id)) $id = '"'.$id.'"';
 		$sql  = "DELETE FROM $fromTable WHERE id=$ID";
 		mysql_query($sql) or die ("Error with HFdb::delete '$sql': " .mysql_error());
 		return $this;
@@ -128,6 +130,7 @@ class HFdb {
 
 
 	function increment($id,$tableName,$tableField,$howMuch){
+		if(!is_numeric($id)) $id = '"'.$id.'"';
 		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
 		$number = $select[0][$tableField] + $howMuch;
 		$this->update($id,$tableName,array($tableField=>$number));
@@ -135,6 +138,7 @@ class HFdb {
 	}
 	
 	function decrement($id,$tableName,$tableField,$howMuch){
+		if(!is_numeric($id)) $id = '"'.$id.'"';
 		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
 		$number = $select[0][$tableField] - $howMuch;
 		$this->update($id,$tableName,array($tableField=>$number));
