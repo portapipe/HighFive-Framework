@@ -3,18 +3,20 @@
 /*! Contains every class, even CRUD, to manage a MySQL database */	
 class HFdb {
 	
+	public $idFieldName = "id";
+	
 	/*! Connect to the database with the passed data
 		If you want just to connect to the database without choosing a table just leave the $tableName var empty		
 	*/
-	function connect($ip="localhost",$user="root",$password="root",$tableName=""){
+	function connect($ip="localhost",$user="root",$password="root",$dbName=""){
 		$link = mysql_connect($ip, $user, $password);
 		if (!$link) {
 			die('Error connecting to MySQL database on ip '.$ip.' : ' . mysql_error());
 		}
-		if($tableName!=""){
-			$db_selected = mysql_select_db($tableName, $link);
+		if($dbName!=""){
+			$db_selected = mysql_select_db($dbName, $link);
 			if (!$db_selected) {
-				die ('Db connection is fine, but error connecting to the table '.$tableName.' : ' . mysql_error());
+				die ('Db connection is fine, but error connecting to the table '.$dbName.' : ' . mysql_error());
 			}
 		}
 	}
@@ -98,7 +100,7 @@ class HFdb {
 			}
 			
 		}
-		$sql  = "UPDATE $tableName SET $val WHERE id=$id";
+		$sql  = "UPDATE $tableName SET $val WHERE ".$this->idFieldName." =$id";
 		
 		mysql_query($sql) or die ("Error with HFdb::update '$sql': " .mysql_error());
 		return $this;
@@ -113,7 +115,7 @@ class HFdb {
 		return $this;
 	}
 	
-	
+ 	
 	/*! This will create a perfect array key=>value for any select/radio of crud or anything you need! */
 	function makeSelectArray($tableName,$keyFieldName,$valueFieldName,$orderBy="id ASC"){
 		global $HF;
@@ -123,7 +125,23 @@ class HFdb {
 			$return[$v[$keyFieldName]]=$v[$valueFieldName];
 		}
 		return $return;
+
+
+	function increment($id,$tableName,$tableField,$howMuch){
+		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
+		$number = $select[0][$tableField] + $howMuch;
+		$this->update($id,$tableName,array($tableField=>$number));
+		return $this;
 	}
+	
+	function decrement($id,$tableName,$tableField,$howMuch){
+		$select = $this->sqlToArray("SELECT $tableField FROM $tableName WHERE ".$this->idFieldName."=$id");
+		$number = $select[0][$tableField] - $howMuch;
+		$this->update($id,$tableName,array($tableField=>$number));
+		return $this;
+	}
+	
+	
 	
 	
 }
