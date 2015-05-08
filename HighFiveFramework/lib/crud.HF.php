@@ -965,10 +965,28 @@ class HFcrud{
 			
 			/* ORDER FIELDS BY A USER ARRAY */
 			if(!empty($this->orderFields)){
-				if(count($v)!=count($this->orderFields)){
-					echo "ERROR Ordering Fields - Fields count are not the same, I think you've forgot some field...";die;
-				}
 				$orderFieldArray = $this->orderFields;
+				
+				//If fields are more than the actual present on the database, so throw error, indicating which fields are extra
+				if(count($v)<count($orderFieldArray)){
+					echo "ERROR Ordering Fields - Fields count are not the same, I think you've added some extra field...<br>
+							What's different: ".json_encode(array_keys(array_diff_key($orderFieldArray,$v)))."<br>
+							Original Fields: ".json_encode(array_keys($v)),"<br>
+							Your Fields:         ".json_encode(array_keys($this->orderFields));die;
+							
+				//if fields are less than the original one so add it at the end without errors
+				}else if(count($v)>count($orderFieldArray)){
+					/*$arraydiff = array_diff_key($v, $orderFieldArray);
+					foreach($arraydiff as $k=>$adw){
+						$arraydiff[$k] = $k;
+					}
+					$orderFieldArray = array_merge($orderFieldArray,$arraydiff);
+					*/
+					echo "ERROR Ordering Fields - Fields count are not the same, I think you've missed some fields...<br>
+							What's different: ".json_encode(array_keys(array_diff_key($v,$orderFieldArray)))."<br>
+							Original Fields: ".json_encode(array_keys($v)),"<br>
+							Your Fields:         ".json_encode(array_keys($orderFieldArray));die;
+				}
 				$newOrderFields = array();
 				$newOrderTitles = array();
 				$newOrderTitlesOg = array();
@@ -980,16 +998,16 @@ class HFcrud{
 					$newOrderTitles[$ordv] = $titles[$ordv];
 					$newOrderTitlesOg[$ordv] = $ogTitles[$ordv];
 				}
+				
 				$v = $newOrderFields;
 				$array[$k] = $v;
 				$ogArray[$k] = $v;
 				$titles = $newOrderTitles;
 				$ogTitles = $newOrderTitlesOg;
 			}
+			
 			/* END ORDER FIELD */
-			
-			
-			
+						
 			
 			//Fix the orderByField, if the standard one doesn't exists
 			if(!isset($v[$this->orderByField])){
@@ -1006,7 +1024,7 @@ class HFcrud{
 			}
 			
 		}
-		
+
 		//Ordering the array from the user's indication
 		if(count($array)>0) array_multisort($orderValue,($this->orderDirection=="ASC"?SORT_ASC:SORT_DESC),$array);
 		
