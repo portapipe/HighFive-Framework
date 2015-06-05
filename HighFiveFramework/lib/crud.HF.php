@@ -1598,9 +1598,11 @@ class HFcrud{
 			<div class="container">
 			    <div class="row">
 			        <div id="no-more-tables" class="no-more-tables">
-			        	<div class="btn-group btn-group-justified" role="group" aria-label="..."><div class="btn-group" role="group">
-			        		$add
-			        	</div></div>
+			        	<div class="btn-group btn-group-justified" role="group" aria-label="...">
+			        		<div class="btn-group" role="group">
+			        			$add
+							</div>
+						</div>
 			            <table class="col-md-12 col-sm-12 table-bordered table-striped table-condensed cf">
 			        		<thead class="cf">
 			        			<tr>
@@ -1623,12 +1625,13 @@ HTML;
 		//Setting Table ID for the refresh thing
 		$_SESSION["_class".$this->genID] = base64_encode(serialize($this));
 		
+		//echo '<script>alert(\''.str_replace("\n","\\",str_replace("'","|",$output)).'\');</script>';
+		
 		if($this->justReturn != true){
-			echo '<span id="table'.$this->genID.'" class="TABELLA_'.$this->genID.'">'.$output.'</span>';
+			echo '<div id="table'.$this->genID.'" class="TABELLA_'.$this->genID.'">'.$output.'</div>';
 		}else{
-			$idGen = $this->genID;
 			if($newTable===true) $this->genID++;
-			return '<span id="table'.$idGen.'" class="TABELLA_'.$idGen.'">'.$output.'</span>';
+			return '<div id="table'.$this->genID.'" class="TABELLA_'.$this->genID.'">'.$output.'</div>';
 		}
 		
 		//echo '<div id="preloader">SIEDITI E </div><button onclick="reload(\''.$this->genID.'\',{target:\'table'.$this->genID.'\',preloader:\'preloader\'})">CLICCA QUI</button><span id="hey"></span>';
