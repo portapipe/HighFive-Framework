@@ -111,7 +111,7 @@ class HFdb {
 	*/
 	function delete($id,$fromTable){
 		if(!is_numeric($id)) $id = "\"".$id."\"";
-		$sql  = "DELETE FROM $fromTable WHERE id=$ID";
+		$sql  = "DELETE FROM $fromTable WHERE id=$id";
 		mysql_query($sql) or die ("Error with HFdb::delete '$sql': " .mysql_error());
 		return $this;
 	}
