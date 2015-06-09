@@ -889,21 +889,22 @@ class HFcrud{
 			}
 		}
 		
-
 		if(count($this->data)==0){
 			if($this->tableName!=""){
-				$array = $HF->db->sqlToArray("SELECT * FROM ".$this->tableName);
-				$this->sql = "SELECT * FROM ".$this->tableName;
-				$pag->setSql($this->sql);
-				if(count($array)>0){
-					$this->setData($array);
-				}else{
-					$array2 = $HF->db->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
-					foreach($array2 as $v){
-						$titles[$v['Field']] = $v['Field'];
-						$this->setTitle($titles);
+				if($this->sql==""){
+					$array1 = $HF->db->sqlToArray("SELECT * FROM ".$this->tableName);
+					$this->sql = "SELECT * FROM ".$this->tableName;
+					$pag->setSql($this->sql);
+					if(count($array1)>0){
+						$this->setData($array1);
+					}else{
+						$array2 = $HF->db->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
+						foreach($array2 as $v){
+							$titles[$v['Field']] = $v['Field'];
+							$this->setTitle($titles);
+						}
+						
 					}
-					
 				}
 			}else{
 				echo "HEY! You want to make an HFcrud table without passing data or choosing a database table!<br>Choose a table with HFcrud::tableName() or pass an array of data indexed with HFcrud::setData()";
@@ -917,6 +918,7 @@ class HFcrud{
 		$phpvisiblecode = $this->visiblePhp;
 		$hide = $this->hide;
 		$disabled = $this->disabled;
+	
 
 		/* Service Vars */
 		$modalID = $this->genID;
