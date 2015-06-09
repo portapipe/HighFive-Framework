@@ -346,7 +346,7 @@ class HFcrud{
 			$titles[$fieldNameOrArray] = $newTitle;
 		}else{
 			foreach($fieldNameOrArray as $k=>$v){
-				$titles[$k] = $v;
+				$titles = $fieldNameOrArray;
 			}
 		}
 		$this->titles = $titles;
@@ -901,10 +901,32 @@ class HFcrud{
 						$array2 = $HF->db->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
 						foreach($array2 as $v){
 							$titles[$v['Field']] = $v['Field'];
-							$this->setTitle($titles);
 						}
-						
+						foreach($array2 as $v){
+							$key = $v['Field'];
+							if(isset($this->titles[$key])){
+								$titles[$key] = $this->titles[$key];
+							}else{
+								$titles[$key] = $key;
+							}
+						}
+						$this->setTitle($titles);						
 					}
+				}else{
+					$array2 = $HF->db->sqlToArray("SHOW COLUMNS FROM ".$this->tableName);
+					foreach($array2 as $v){
+						$titles[$v['Field']] = $v['Field'];
+					}
+					foreach($array2 as $v){
+						$key = $v['Field'];
+						if(isset($this->titles[$key])){
+							$titles[$key] = $this->titles[$key];
+						}else{
+							$titles[$key] = $key;
+						}
+					}
+					$this->setTitle($titles);
+
 				}
 			}else{
 				echo "HEY! You want to make an HFcrud table without passing data or choosing a database table!<br>Choose a table with HFcrud::tableName() or pass an array of data indexed with HFcrud::setData()";
