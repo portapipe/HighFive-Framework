@@ -17,7 +17,7 @@ define('HF_LANGUAGE','IT');
 //It's used for encrypt/decrypt any string you want [HFstring::encrypt($string)]
 //and is used by some classes like login id storage, so change it, even just one char!
 //Put even a phrase or a code, so you have your unique SECURE encryption algorithm 
-define("ENCRYPTION_KEY","12398872461239%)(**&&&+");
+define("ENCRYPTION_KEY","12398872461239%)(**&&0&+");
 
 
 	
