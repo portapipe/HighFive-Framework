@@ -1,4 +1,4 @@
-<?
+<?php
 //include the config file for HighFive
 require("HF.config.php");
 
