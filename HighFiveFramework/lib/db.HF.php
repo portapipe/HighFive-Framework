@@ -16,7 +16,12 @@ class HFdb {
 		if($dbName!=""){
 			$db_selected = mysql_select_db($dbName, $link);
 			if (!$db_selected) {
-				die ('Db connection is fine, but error connecting to the table '.$dbName.' : ' . mysql_error());
+				
+				$error = 'Db connection is fine, but error connecting to the table '.$dbName.' : ' . mysql_error();
+				
+				throw new Exception($error);
+				
+				die ($error);
 			}
 		}
 	}
@@ -24,7 +29,14 @@ class HFdb {
 	
 	/*! Convert any Select Query into an assoc-array - return array */
 	function sqlToArray($query){
-		$result = mysql_query($query) or die ("Error HFdb::sqlToArray '$query' :<br/>".mysql_error());
+		$result = mysql_query($query);
+		//ERROR HANDLER
+		if($result===false){
+			$error = "Error HFdb::sqlToArray '$query' :<br/>".mysql_error();
+			throw new Exception($error);
+			die ($error);
+		}
+		
 		$i=0;
 		$array = array();
 		while ($row = mysql_fetch_assoc($result)) {
@@ -41,6 +53,9 @@ class HFdb {
 		This will work like a charm if you set all the fields into a form and pass $_POST as second param!
 		C of CRUD
 	*/
+	//aliases insert
+	function create($tableName,$array){$this->insert($tableName, $array);}
+	
 	function insert($tableName, $array){
 		
 		if(!is_array($array)){ echo "Array is needed in HFdb::insert() function! The second parameter must be an assoc array. Read the docs!"; die; }
@@ -58,10 +73,18 @@ class HFdb {
 			
 		}
 		$sql  = "INSERT INTO $tableName ($keys) VALUES ($values)";
+				
 		
-		mysql_query($sql) or die ("Error with HFdb::insert \"$sql\":
+		//ERROR HANDLER
+		if(!mysql_query($sql)){
+			$error = "Error with HFdb::insert \"$sql\":
 
-" .mysql_error());
+" .mysql_error();
+			throw new Exception($error);
+			die ($error);
+		}
+	
+	
 		return $this;
 	}
 
@@ -77,7 +100,14 @@ class HFdb {
 		
 		$sql  = "SELECT $theFields FROM $fromTable$where$limit";
 		
-		return mysql_query($sql) or die ("Error with HFdb::select '$sql': " .mysql_error());
+		//ERROR HANDLER
+		$return = mysql_query($sql);
+		if($return === false ){
+			$error = "Error with HFdb::select '$sql': " .mysql_error();
+			throw new Exception($error);
+			die ($error);
+		}
+		return $return;
 	}
 
 	/*! Update values of id (param1) into a tableName (param2) with array's content (param3).
@@ -102,7 +132,15 @@ class HFdb {
 		if(!is_numeric($id)) $id = "\"".$id."\"";
 		$sql  = "UPDATE $tableName SET $val WHERE ".$this->idFieldName." =$id";
 		
-		mysql_query($sql) or die ("Error with HFdb::update '$sql': " .mysql_error());
+		$return = mysql_query($sql);
+		
+		if($return === false ){
+			$error = "Error with HFdb::update '$sql': " .mysql_error();
+			throw new Exception($error);
+			die ($error);
+		}
+		
+		
 		return $this;
 	}
 
@@ -112,7 +150,13 @@ class HFdb {
 	function delete($id,$fromTable){
 		if(!is_numeric($id)) $id = "\"".$id."\"";
 		$sql  = "DELETE FROM $fromTable WHERE id=$id";
-		mysql_query($sql) or die ("Error with HFdb::delete '$sql': " .mysql_error());
+		$return = mysql_query($sql);
+		
+		if($return === false ){
+			$error = "Error with HFdb::delete '$sql': " .mysql_error();
+			throw new Exception($error);
+			die ($error);
+		}
 		return $this;
 	}
 	
