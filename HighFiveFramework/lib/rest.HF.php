@@ -104,7 +104,7 @@ class HFrest{
 	//Return boolean if authorized or not
 	function auth($key=null){
 		if($key == null){
-			if($this->AUTH_KEY!=""){
+			if($this->AUTH_KEY!=null){
 				$key = $this->AUTH_KEY;
 			}
 		}
