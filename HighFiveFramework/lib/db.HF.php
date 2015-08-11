@@ -5,6 +5,13 @@ class HFdb {
 	
 	public $idFieldName = "id";
 	
+	/*! Set idFieldName if you want to use something different from standard 'id' */
+	function setIdFieldName($name){
+		$this->idFieldName = $name;
+		return $this;
+	}
+	
+	
 	/*! Connect to the database with the passed data
 		If you want just to connect to the database without choosing a table just leave the $tableName var empty		
 	*/
