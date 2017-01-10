@@ -24,7 +24,7 @@ define("ENCRYPTION_KEY","12398872461239%)(**&&0&+");
 # ========================= #
 # ==== FILES POSITIONS ==== #
 # ========================= #
-define('__HF__', $_SERVER['DOCUMENT_ROOT']."/HighFiveFramework");
+define('__HF__', dirname(__FILE__)); //$_SERVER['DOCUMENT_ROOT']
 
 //Lib folder directory (full path)
 define("HF_LIB_DIR", __HF__.'/lib/');
