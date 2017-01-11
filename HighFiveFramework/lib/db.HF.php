@@ -156,7 +156,7 @@ class HFdb {
 	*/
 	function delete($id,$fromTable){
 		if(!is_numeric($id)) $id = "\"".$id."\"";
-		$sql  = "DELETE FROM $fromTable WHERE id=$id";
+		$sql  = "DELETE FROM $fromTable WHERE ".$this->idFieldName." =$id";
 		$return = mysql_query($sql);
 		
 		if($return === false ){
